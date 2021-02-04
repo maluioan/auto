@@ -94,10 +94,6 @@ public class HomeBoardService {
         // TODO: bulk insert pt actions
         final Optional<CommandModel> command = commandRepository.findCommandById(commandId);
         CommandModel commandModel = command.get();
-//        actions.stream().map(actionConverter::convertToModel).forEach(action -> {
-//            commandModel.addAction(action);
-//        });
-
         return null;
     }
 
