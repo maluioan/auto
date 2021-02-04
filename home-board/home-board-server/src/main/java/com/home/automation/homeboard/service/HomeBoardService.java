@@ -2,9 +2,7 @@ package com.home.automation.homeboard.service;
 
 import com.home.automation.homeboard.converters.ActionConverter;
 import com.home.automation.homeboard.converters.CommandConverter;
-import com.home.automation.homeboard.data.ActionData;
 import com.home.automation.homeboard.data.CommandData;
-import com.home.automation.homeboard.domain.ActionModel;
 import com.home.automation.homeboard.domain.CommandModel;
 import com.home.automation.homeboard.exception.BaseModelNotFoundException;
 import com.home.automation.homeboard.repo.CommandRepository;
@@ -15,7 +13,6 @@ import org.springframework.util.Assert;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -85,7 +82,7 @@ public class HomeBoardService {
         if (updatedRecords == 0) {
             throw new RuntimeException("could not update any records for id: " + commandId);
         }
-        newCommand.setCommandAction(managedCommandOpt.get().getCommandAction());
+        newCommand.setActions(managedCommandOpt.get().getActions());
         return commandConverter.convertToData(newCommand);
     }
 
@@ -97,14 +94,11 @@ public class HomeBoardService {
         // TODO: bulk insert pt actions
         final Optional<CommandModel> command = commandRepository.findCommandById(commandId);
         CommandModel commandModel = command.get();
-        actions.stream().map(actionConverter::convertToModel).forEach(action -> {
-            commandModel.addAction(action);
-        });
-
-        command.
+//        actions.stream().map(actionConverter::convertToModel).forEach(action -> {
+//            commandModel.addAction(action);
+//        });
 
         return null;
-
     }
 
     private void checkForCommand(final Long commandId) {

@@ -1,12 +1,12 @@
 package com.home.automation.homeboard.domain;
 
-import com.home.automation.homeboard.domain.associations.CommandActionModel;
-import org.apache.commons.collections4.SetUtils;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 
-import javax.persistence.*;
-import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 
 @NaturalIdCache
 @Entity(name = "actions")
@@ -22,12 +22,8 @@ public class ActionModel extends BaseModel {
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy = "action",
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private Set<CommandActionModel> commandAction = SetUtils.hashSet();
+    @ManyToOne(fetch = FetchType.EAGER)
+    private CommandModel commandModel;
 
 //    @ManyToOne // TODO: amanare
 //    private BoardModel boardModel;
@@ -40,12 +36,12 @@ public class ActionModel extends BaseModel {
         this.command = command;
     }
 
-    public Set<CommandActionModel> getCommandAction() {
-        return commandAction;
+    public CommandModel getCommandModel() {
+        return commandModel;
     }
 
-    public void setCommandAction(Set<CommandActionModel> commandAction) {
-        this.commandAction = commandAction;
+    public void setCommandModel(CommandModel commandModel) {
+        this.commandModel = commandModel;
     }
 
     public String getName() {

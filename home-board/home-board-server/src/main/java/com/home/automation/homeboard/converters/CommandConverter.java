@@ -2,7 +2,6 @@ package com.home.automation.homeboard.converters;
 
 import com.home.automation.homeboard.converters.base.AbstractBaseConverter;
 import com.home.automation.homeboard.data.ActionData;
-import com.home.automation.homeboard.data.BoardData;
 import com.home.automation.homeboard.data.CommandData;
 import com.home.automation.homeboard.domain.ActionModel;
 import com.home.automation.homeboard.domain.CommandModel;
@@ -52,7 +51,7 @@ public class CommandConverter extends AbstractBaseConverter<CommandModel, Comman
                 cd.setDateCreated(commandActionModel.getDateCreated());
                 cd.setDateModified(commandActionModel.getDateModified());
                 cd.setId(commandActionModel.getId());
-                cd.setActions(CollectionUtils.emptyIfNull(commandActionModel.getCommandAction()).stream().map(CommandConverter.this::createActionData).collect(Collectors.toSet()));
+                cd.setActions(CollectionUtils.emptyIfNull(commandActionModel.getActions()).stream().map(CommandConverter.this::createActionData).collect(Collectors.toSet()));
                 return cd;
             }
         };
