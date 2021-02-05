@@ -1,5 +1,6 @@
 package com.home.automation.homeboard.domain;
 
+import com.home.automation.homeboard.domain.associations.CommandActionModel;
 import org.apache.commons.collections4.SetUtils;
 
 import javax.persistence.*;
@@ -36,12 +37,12 @@ public class CommandModel extends BaseModel {
     @Column(name = "description")
     private String description;
 
-    @OneToMany(
-        mappedBy = "command",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
+    @OneToMany(mappedBy = "command",
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true
     )
-    private Set<ActionModel> actions = SetUtils.hashSet();
+    private Set<CommandActionModel> commandAction = SetUtils.hashSet();
 
     private Boolean active;
 
@@ -53,12 +54,12 @@ public class CommandModel extends BaseModel {
         this.name = name;
     }
 
-    public Set<ActionModel> getActions() {
-        return actions;
+    public Set<CommandActionModel> getCommandAction() {
+        return commandAction;
     }
 
-    public void setActions(Set<ActionModel> actions) {
-        this.actions = actions;
+    public void setCommandAction(Set<CommandActionModel> commandAction) {
+        this.commandAction = commandAction;
     }
 
     public String getDescription() {
@@ -69,6 +70,7 @@ public class CommandModel extends BaseModel {
         this.description = description;
     }
 
+
     public Boolean getActive() {
         return active;
     }
@@ -77,8 +79,17 @@ public class CommandModel extends BaseModel {
         this.active = active;
     }
 
-    public void addAction(final ActionModel action) {
-        this.getActions().add(action);
+    public void addAction(final ActionModel action, boolean updateAction) {
+        final CommandActionModel cam = new CommandActionModel(this, action);
+
+        this.commandAction.add(cam);
+        if (updateAction) {
+            action.getCommandAction().add(cam);
+        }
+    }
+
+    public void removeAction(ActionModel action) {
+
     }
 
     @Override

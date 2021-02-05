@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity(name = "command_action")
-@Deprecated
 public class CommandActionModel {
 
     @EmbeddedId

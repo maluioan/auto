@@ -31,7 +31,7 @@ public class QueryBasedCommandRepository implements CommandRepository {
 
     @Override
     public CommandModel saveCommand(final CommandModel commandModel) {
-        CollectionUtils.emptyIfNull(commandModel.getActions()).stream()
+        CollectionUtils.emptyIfNull(commandModel.getCommandAction()).stream()
                 .map(CommandActionModel::getAction)
                 .forEach(actionRepository::saveOrUpdateAction);
         entityManager.persist(commandModel);

@@ -82,7 +82,7 @@ public class HomeBoardService {
         if (updatedRecords == 0) {
             throw new RuntimeException("could not update any records for id: " + commandId);
         }
-        newCommand.setActions(managedCommandOpt.get().getActions());
+        newCommand.setCommandAction(managedCommandOpt.get().getCommandAction());
         return commandConverter.convertToData(newCommand);
     }
 
@@ -95,6 +95,7 @@ public class HomeBoardService {
         final Optional<CommandModel> command = commandRepository.findCommandById(commandId);
         CommandModel commandModel = command.get();
         return null;
+
     }
 
     private void checkForCommand(final Long commandId) {
