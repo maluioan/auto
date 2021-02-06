@@ -2,6 +2,7 @@ package com.home.automation.homeboard.repo;
 
 import com.home.automation.homeboard.domain.ActionModel;
 import com.home.automation.homeboard.domain.CommandModel;
+import com.home.automation.homeboard.domain.associations.CommandActionModel;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,8 +15,9 @@ public interface CommandRepository {
 
     void removeCommand(Long commandId);
 
-    @Deprecated
-    Optional<CommandModel> addActionsToCommand(CommandModel commandModel, List<ActionModel> actions);
+    List<CommandActionModel> addActionsToCommand(CommandModel command, List<Long> actionIds);
 
     Optional<CommandModel> findCommandById(Long commandId);
+
+    void changeCommandActionStatus(CommandModel commandId, List<ActionModel> actionIds, boolean activeStatus);
 }

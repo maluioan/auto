@@ -2,21 +2,23 @@ package com.home.automation.homeboard.converters;
 
 import com.home.automation.homeboard.converters.base.AbstractBaseConverter;
 import com.home.automation.homeboard.data.ActionData;
-import com.home.automation.homeboard.data.BoardData;
 import com.home.automation.homeboard.data.CommandData;
-import com.home.automation.homeboard.domain.ActionModel;
 import com.home.automation.homeboard.domain.CommandModel;
 import com.home.automation.homeboard.domain.associations.CommandActionModel;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
 public class CommandConverter extends AbstractBaseConverter<CommandModel, CommandData> {
+
+    @Autowired
+    private ActionConverter actionConverter;
 
     public CommandConverter() {
         super(CommandModel.class, CommandData.class);
@@ -37,7 +39,7 @@ public class CommandConverter extends AbstractBaseConverter<CommandModel, Comman
                 cm.setName(commandData.getName());
                 cm.setActive(commandData.isActive());
                 CollectionUtils.emptyIfNull(commandData.getActions()).stream()
-                        .map(CommandConverter.this::createActionModel)
+                        .map(actionConverter::convertToModel)
                         .forEach(action -> cm.addAction(action, false));
 
                 return cm;
@@ -58,26 +60,9 @@ public class CommandConverter extends AbstractBaseConverter<CommandModel, Comman
         };
     }
 
-    private ActionData createActionData(CommandActionModel commandActionModel) {
-        final ActionModel action = commandActionModel.getAction();
-
-        final ActionData ad = new ActionData();
-        ad.setName(action.getName());
-        ad.setCommand(action.getCommand());
-        ad.setDescription(action.getDescription());
-        ad.setDateCreated(action.getDateCreated());
-        ad.setDateModified(action.getDateModified());
-        ad.setId(action.getId());
-//        ad.setBoards(createBoardData());
-        return ad;
+    private ActionData createActionData(final CommandActionModel cam) {
+        final ActionData actionData = actionConverter.convertToData(cam.getAction());
+        actionData.setActive(cam.getActive());
+        return actionData;
     }
-
-    private ActionModel createActionModel(ActionData actionData) {
-        final ActionModel am = new ActionModel();
-        am.setDescription(actionData.getDescription());
-        am.setName(actionData.getName());
-        am.setCommand(actionData.getCommand());
-        return am;
-    }
-
 }

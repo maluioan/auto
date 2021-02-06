@@ -2,6 +2,7 @@ package com.home.automation.homeboard.domain;
 
 import com.home.automation.homeboard.domain.associations.CommandActionModel;
 import org.apache.commons.collections4.SetUtils;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -18,17 +19,19 @@ import java.util.Set;
                 query = "update commands com set com.active = :active where com.id = :id"
         ),
         @NamedQuery(
-                name= CommandModel.UPDATE_COMMAND_WITh_ID_ACTIVE_STATUS,
+                name= CommandModel.UPDATE_COMMAND_WITH_ID_ACTIVE_STATUS,
                 query = "update commands com set com.name = :name, com.description = :description where com.id = :id"
         )
 })
 
 @Entity(name = "commands")
+//@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "active"})) // TODO: create in DB?
+@DynamicUpdate
 public class CommandModel extends BaseModel {
 
     public static final String FIND_ACTIVE_COMMAND_WITH_ID = "CommandModel.findById";
     public static final String TOGGLE_COMMAND_WITH_ID_ACTIVE_STATUS = "CommandModel.inactivateById";
-    public static final String UPDATE_COMMAND_WITh_ID_ACTIVE_STATUS = "CommandModel.updateCommand";
+    public static final String UPDATE_COMMAND_WITH_ID_ACTIVE_STATUS = "CommandModel.updateBaseModel";
 
     //@NaturalId
     @Column(name = "name", nullable = false, unique = true)
@@ -43,8 +46,6 @@ public class CommandModel extends BaseModel {
             orphanRemoval = true
     )
     private Set<CommandActionModel> commandAction = SetUtils.hashSet();
-
-    private Boolean active;
 
     public String getName() {
         return name;
@@ -68,15 +69,6 @@ public class CommandModel extends BaseModel {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
     public void addAction(final ActionModel action, boolean updateAction) {

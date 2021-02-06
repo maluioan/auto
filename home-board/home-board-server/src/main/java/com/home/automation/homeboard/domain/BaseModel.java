@@ -12,6 +12,7 @@ public class BaseModel {
     private Long id;
     private LocalDateTime dateCreated;
     private LocalDateTime dateModified;
+    private Boolean active = Boolean.TRUE;
 
     public Long getId() {
         return id;
@@ -35,5 +36,13 @@ public class BaseModel {
 
     public void setDateModified(LocalDateTime dateModified) {
         this.dateModified = dateModified;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

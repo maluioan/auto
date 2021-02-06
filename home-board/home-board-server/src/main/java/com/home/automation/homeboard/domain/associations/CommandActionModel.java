@@ -7,13 +7,21 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity(name = "command_action")
+@NamedQueries(
+        @NamedQuery(
+                name = CommandActionModel.TOGGLE_COMMAND_ACTION_STATUS,
+                query = "update command_action ca set ca.active = :active where ca.command = :command and ca.action in (:action)"
+        )
+)
 public class CommandActionModel {
+
+    public static final String TOGGLE_COMMAND_ACTION_STATUS = "CommandActionModel.toggle_active";
 
     @EmbeddedId
     private CommandActionCompositeKey compositeKey;
 
 //    https://vladmihalcea.com/the-best-way-to-map-a-many-to-many-association-with-extra-columns-when-using-jpa-and-hibernate/
-    @ManyToOne(fetch = FetchType.EAGER) // TODO: check fetch type
+    @ManyToOne(fetch = FetchType.LAZY) // TODO: check fetch type
     @MapsId("actionId")
     @JoinColumn(name = "action_id")
     private ActionModel action;
@@ -23,8 +31,7 @@ public class CommandActionModel {
     @JoinColumn(name = "command_id")
     private CommandModel command;
 
-    @Column(name = "active")
-    private Boolean enable;
+    private Boolean active = Boolean.TRUE;
 
     public CommandActionModel() {}
 
@@ -32,7 +39,14 @@ public class CommandActionModel {
         this.action = action;
         this.command = command;
         this.compositeKey = new CommandActionCompositeKey();
-        this.enable = true;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public CommandActionCompositeKey getCompositeKey() {
@@ -59,25 +73,18 @@ public class CommandActionModel {
         this.command = command;
     }
 
-    public Boolean getEnable() {
-        return enable;
-    }
-
-    public void setEnable(Boolean enable) {
-        this.enable = enable;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CommandActionModel that = (CommandActionModel) o;
         return getAction().equals(that.getAction()) &&
-               getCommand().equals(that.getCommand());
+               getCommand().equals(that.getCommand()) &&
+               Objects.equals(getActive(), that.getActive());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAction(), getCommand());
+        return Objects.hash(getAction(), getCommand(), getActive());
     }
 }

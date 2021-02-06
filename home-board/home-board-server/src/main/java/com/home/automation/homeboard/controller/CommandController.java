@@ -1,7 +1,5 @@
 package com.home.automation.homeboard.controller;
 
-import com.home.automation.homeboard.data.ActionData;
-import com.home.automation.homeboard.data.BoardData;
 import com.home.automation.homeboard.data.CommandData;
 import com.home.automation.homeboard.service.HomeBoardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,15 +8,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// TODO: verifica fiecare requet si queriuriile de hibernate, verifica sa fie batched unde-i cazul
 @RestController
-public class CommandExecutionController {
+public class CommandController {
 
     @Autowired
     private HomeBoardService homeBoardService;
 
     @GetMapping(value = "/command/{commandDataId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CommandData retrieveCommand(@PathVariable final Long commandDataId) {
-        return homeBoardService.getCommandDataById(commandDataId);
+        return homeBoardService.findCommandById(commandDataId);
     }
 
     @PostMapping(value = "/command", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -32,27 +31,21 @@ public class CommandExecutionController {
         return homeBoardService.updateCommand(commandId, commandData);
     }
 
-    @DeleteMapping(value = "/command/{commandId}")
+    @DeleteMapping("/command/{commandId}")
     public void deleteCommand(@PathVariable Long commandId) {
         homeBoardService.deleteCommand(commandId);
     }
 
-    @PutMapping(value = "/command/{commandId}/actions", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommandData updateActionsToCommand(@PathVariable Long commandId, @RequestBody final List<Long> actionIds) {
+    @PutMapping(value = "/commandaction/{commandId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommandData updateActionsToCommand(@PathVariable Long commandId, @RequestParam final List<Long> actionIds) {
         return homeBoardService.addActionsToCommand(commandId, actionIds);
     }
 
-    @PostMapping(value = "/board", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public BoardData createBoard(@RequestBody final BoardData boardData) {
-//        return homeBoardService.addBoard(boardData);
-        return null;
+    // TODO: change GET, not suitable
+    @GetMapping(value = "/commandaction/{commandId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommandData disableActionsForCommand(@PathVariable Long commandId,
+                                                @RequestParam List<Long> actionIds,
+                                                @RequestParam Boolean status) {
+        return homeBoardService.disableActionsForCoomand(commandId, actionIds, status);
     }
-    //
-    @PutMapping(value = "/board/{boardId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public BoardData updateBoard(@PathVariable Long boardId,
-                                 @RequestBody final BoardData boardData) {
-//        return homeBoardService.updateBoard(boardId, boardData);
-        return null;
-    }
-
 }
