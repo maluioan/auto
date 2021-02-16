@@ -16,6 +16,7 @@ public class LoginAttempt extends Base {
     @Enumerated(EnumType.STRING)
     private FailureReason failureReason;
 
+    @Column(length = 1000)
     private String failureMessage;
 
     @Column(name = "attempted_username")

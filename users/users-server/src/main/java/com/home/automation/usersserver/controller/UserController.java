@@ -22,7 +22,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @ResponseBody
     @GetMapping(value = "/user/{userName}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserData> findUserByUserName(@PathVariable(value = "userName") String userName) {
         ResponseEntity response = new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -37,7 +36,6 @@ public class UserController {
         return response;
     }
 
-    @ResponseBody
     @ResponseStatus(code = HttpStatus.CREATED)
     @PostMapping(value = "/user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> createUser(@RequestBody UserData user) {

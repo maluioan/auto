@@ -1,5 +1,6 @@
 package com.home.automation.homeboard.security;
 
+import org.apache.tomcat.websocket.server.UpgradeUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -29,15 +30,21 @@ public class HomeClientRequestAuthFilter extends GenericFilterBean {
         final HttpServletRequest httpServletRequest = (HttpServletRequest)servletRequest;
         final HttpServletResponse httpServletResponse = (HttpServletResponse)servletResponse;
 
-        final String authorization = httpServletRequest.getHeader("Authorization");
-        if (Objects.isNull(authorization)) {
-            httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Please provide some credentials");
-
-        } else if (!token.equals(authorization)) {
-            httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        if (UpgradeUtil.isWebSocketUpgradeRequest(httpServletRequest, httpServletResponse)) {
+            filterChain.doFilter(servletRequest, servletResponse);
 
         } else {
-            filterChain.doFilter(servletRequest, servletResponse);
+            final String authorization = httpServletRequest.getHeader("Authorization");
+            if (Objects.isNull(authorization)) {
+                httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Please provide some credentials");
+
+            } else if (!token.equals(authorization)) {
+                httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, HttpStatus.UNAUTHORIZED.getReasonPhrase());
+
+            } else {
+                filterChain.doFilter(servletRequest, servletResponse);
+            }
+
         }
     }
 

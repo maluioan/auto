@@ -1,6 +1,7 @@
 package com.home.automation.homeboard.domain;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity(name = "boards")
 public class BoardModel extends BaseModel {
@@ -11,11 +12,8 @@ public class BoardModel extends BaseModel {
     @Column(name = "description")
     private String description;
 
-    //    @OneToMany(mappedBy = "boardModel")
-//    private Collection<CommandActionModel> boardModelAssociations;
-
-//    @OneToMany(mappedBy = "boardModel")
-//    private Collection<ActionModel> actions;
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ActionModel> actions;
 
     public String getName() {
         return name;
@@ -33,20 +31,12 @@ public class BoardModel extends BaseModel {
         this.description = description;
     }
 
-    //    public Collection<CommandActionModel> getBoardModelAssociations() {
-//        return boardModelAssociations;
-//    }
-//
-//    public void setBoardModelAssociations(Collection<CommandActionModel> boardModelAssociations) {
-//        this.boardModelAssociations = boardModelAssociations;
-//    }
+    public Set<ActionModel> getActions() {
+        return actions;
+    }
 
-//    public Collection<ActionModel> getActions() {
-//        return actions;
-//    }
-//
-//    public void setActions(Collection<ActionModel> actions) {
-//        this.actions = actions;
-//    }
+    public void setActions(Set<ActionModel> actions) {
+        this.actions = actions;
+    }
 
 }

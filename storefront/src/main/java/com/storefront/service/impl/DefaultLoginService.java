@@ -24,7 +24,7 @@ public class DefaultLoginService implements LoginService {
 
     @Override
     public Optional<LoginAttempt> findLoginAttemptById(String loginAttemptId) {
-        Assert.isNull(loginAttemptId, "Login attempt ID must not be null");
-        return loginAttemptRepo.findById(loginAttemptId);
+        Assert.notNull(loginAttemptId, "Login attempt ID must not be null");
+        return loginAttemptRepo.findByuid(loginAttemptId);
     }
 }

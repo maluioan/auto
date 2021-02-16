@@ -52,10 +52,11 @@ public class ActionModel extends BaseModel {
             cascade = CascadeType.DETACH, // TODO: cand se salveaza ActionModel, sa nu se salveze restul
             orphanRemoval = true
     )
+//    https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
     private Set<CommandActionModel> commandAction = SetUtils.hashSet();
 
-//    @ManyToOne // TODO: amanare
-//    private BoardModel boardModel;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private BoardModel board;
 
     public String getCommand() {
         return command;
@@ -89,4 +90,28 @@ public class ActionModel extends BaseModel {
         this.description = description;
     }
 
+    public BoardModel getBoard() {
+        return board;
+    }
+
+    public void setBoard(BoardModel board) {
+        this.board = board;
+    }
 }
+
+
+
+
+//    Post post = new Post("First post");
+//
+//post.getComments().add(
+//        new PostComment("My first review")
+//        );
+//        post.getComments().add(
+//        new PostComment("My second review")
+//        );
+//        post.getComments().add(
+//        new PostComment("My third review")
+//        );
+//
+//        entityManager.persist(post);

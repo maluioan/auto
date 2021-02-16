@@ -3,13 +3,61 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="clientAuthFilter" class="org.springframework.boot.web.servlet.FilterRegistrationBean">
+    <bean id="homeWSFilter" class="org.springframework.boot.web.servlet.FilterRegistrationBean">
         <property name="order" value="0" />
         <property name="filter">
-            <bean class="com.home.automation.homeboard.security.HomeClientRequestAuthFilter">
-                <constructor-arg name="clientId" value="${users.client.id}" />
-                <constructor-arg name="password" value="${users.client.password}" />
+            <bean class="com.home.automation.homeboard.security.HomeWsInitializerFilter">
+                <property name="token" value="123Token"/>
+                <property name="boardWsConfigurationManager" ref="boardWsConfigurationManager" />
             </bean>
+        </property>
+    </bean>
+
+    <bean id="clientAuthFilter" class="org.springframework.boot.web.servlet.FilterRegistrationBean">
+        <property name="order" value="2" />
+        <property name="filter">
+            <bean class="com.home.automation.homeboard.security.HomeClientRequestAuthFilter">
+                <constructor-arg name="clientId" value="${userModel.client.id}" />
+                <constructor-arg name="password" value="${userModel.client.password}" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="boardWsConfigurationManager" class="com.home.automation.homeboard.websocket.config.BoardWsConfigurationManager">
+        <property name="wsConfigurations">
+            <list>
+                <ref bean="boardWsBoardConfig"/>
+                <ref bean="subscribeWsBoardConfig"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Endpoints configuration -->
+    <bean id="boardWsBoardConfig" class="com.home.automation.homeboard.websocket.config.DefaultBoardWsConfiguration">
+        <property name="boardWsSubscribedClient" ref="boardEndpoint"/>
+    </bean>
+    <bean id="subscribeWsBoardConfig" class="com.home.automation.homeboard.websocket.config.DefaultBoardWsConfiguration">
+        <property name="boardWsSubscribedClient" ref="subscriberEndpoint"/>
+    </bean>
+
+
+    <!-- Endpoints -->
+    <bean id="boardEndpoint" class="com.home.automation.homeboard.websocket.endpoint.WebSocketBoardSubscribedClient">
+        <property name="path" value="/boards/server" />
+        <property name="messageConverter" ref="boardMessageConverter"/>
+    </bean>
+
+    <bean id="subscriberEndpoint" class="com.home.automation.homeboard.websocket.endpoint.WebSocketSubscriberSubscribedClient">
+        <property name="path" value="/subscriber/server" />
+        <property name="messageConverter" ref="boardSubscriberConverter" />
+    </bean>
+
+    <!-- Board message converters-->
+    <bean id="boardMessageConverter" class="com.home.automation.homeboard.websocket.message.converter.MicroControllerMessageConverter"/>
+
+    <bean id="boardSubscriberConverter" class="com.home.automation.homeboard.websocket.message.converter.StompServerConnectionMessageConverter">
+        <property name="nextMessageConverter">
+            <bean class="com.home.automation.homeboard.websocket.message.converter.StompServerCommandMessageConverter"/>
         </property>
     </bean>
 

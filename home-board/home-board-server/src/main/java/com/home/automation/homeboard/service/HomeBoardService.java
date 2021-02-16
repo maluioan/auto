@@ -3,6 +3,7 @@ package com.home.automation.homeboard.service;
 import com.home.automation.homeboard.converters.ActionConverter;
 import com.home.automation.homeboard.converters.CommandConverter;
 import com.home.automation.homeboard.data.ActionData;
+import com.home.automation.homeboard.data.BoardData;
 import com.home.automation.homeboard.data.CommandData;
 import com.home.automation.homeboard.domain.ActionModel;
 import com.home.automation.homeboard.domain.CommandModel;
@@ -135,29 +136,10 @@ public class HomeBoardService {
         return commandConverter.convertToData(commandModel);
     }
 
-    private ActionModel findAssociatedCommandAction(Long commandId, final Long actionId, Set<CommandActionModel> commandAction) {
-        final Optional<ActionModel> commandActionOpt = commandAction.stream()
-                .map(CommandActionModel::getAction)
-                .filter(action -> Objects.equals(action.getId(), actionId))
-                .findFirst();
-        return commandActionOpt.orElseThrow(() -> new RuntimeException(String.format("Action with id %s not found for command %s", actionId, commandId)));
-    }
-
-    public CommandData enableActionsForCoomand(final Long commandId, final List<Long> actions) {
-        Assert.notNull(commandId, "Command Id to update should not be null");
-        Assert.notNull(actions, "Command data to update should not be null");
-
-        final CommandModel commandModel = checkAndGetCommand(commandId);
-        // TODO: bulk insert pt actions
-        final List<CommandActionModel> commandActionModels = commandRepository.addActionsToCommand(commandModel, actions);
-        commandModel.getCommandAction().addAll(commandActionModels);
-        return commandConverter.convertToData(commandModel);
-    }
-
     /**
-     *
-     * @param actionId
+     * ACTIONS
      */
+
     public ActionData findActionById(Long actionId) {
         Assert.notNull(actionId, "Action id shouldn't be emtpy");
 
@@ -190,6 +172,13 @@ public class HomeBoardService {
         checkAndGetAction(actionId);
 
         actionRepository.removeAction(actionId);
+    }
+
+    /**
+     * BOARDS
+     */
+    public BoardData createBoard(BoardData boardData) {
+        return null;
     }
 
     private CommandModel checkAndGetCommand(final Long commandId) {

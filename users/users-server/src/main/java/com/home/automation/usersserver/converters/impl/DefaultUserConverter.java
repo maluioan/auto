@@ -13,7 +13,7 @@ import java.util.*;
 @Component
 public class DefaultUserConverter extends ConfigurableMapper implements UserConverter {
 
-    private static List<String> excludedFields = Collections.synchronizedList(Arrays.asList("password", "contactData.user", "dateCreated", "dateModified"));
+    private static List<String> excludedFields = Collections.synchronizedList(Arrays.asList("contactData.user", "dateCreated", "dateModified"));
     private static Map<String, String> mappedFields = Collections.synchronizedMap(new HashMap<>());
     static {
         mappedFields.put("roleData", "roleModels");

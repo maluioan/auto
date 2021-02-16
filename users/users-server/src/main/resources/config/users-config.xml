@@ -10,8 +10,8 @@
         <property name="order" value="0" />
         <property name="filter">
             <bean class="com.home.automation.usersserver.security.HomeClientRequestAuthFilter">
-                <constructor-arg name="clientId" value="${users.client.id}" />
-                <constructor-arg name="password" value="${users.client.password}" />
+                <constructor-arg name="clientId" value="${userModel.client.id}" />
+                <constructor-arg name="password" value="${userModel.client.password}" />
             </bean>
         </property>
     </bean>

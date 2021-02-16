@@ -11,22 +11,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.Optional;
 
 @Controller
-public class LoginController {
+            public class LoginController {
 
-    @Autowired
-    private LoginService loginService;
+                @Autowired
+                private LoginService loginService;
 
-    @GetMapping({"/login", "/login/{id}"})
-    public String login(@PathVariable(name = "id") Optional<String> uid,
-            final Model model) {
+                @GetMapping({"/login", "/login/{id}"})
+                public String login(@PathVariable(name = "id") Optional<String> uid,
+                        final Model model) {
 
-        if (uid.isPresent()) {
-            final Optional<LoginAttempt> loginAttempt = loginService.findLoginAttemptById(uid.get());
+                    if (uid.isPresent()) {
+                        final Optional<LoginAttempt> loginAttempt = loginService.findLoginAttemptById(uid.get());
 
-            if (loginAttempt.isPresent()) {
-                model.addAttribute("failureReason", loginAttempt.get().getFailureReason());
+                        if (loginAttempt.isPresent()) {
+                            model.addAttribute("failureReason", loginAttempt.get().getFailureReason());
+                        }
+                    }
+                    return "login";
+                }
             }
-        }
-        return "login";
-    }
-}

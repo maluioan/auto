@@ -14,8 +14,8 @@
         <property name="clientHttpRequestInitializers">
             <util:list>
                 <bean class="com.home.automation.util.initializer.HomeClientHttpRequestInitializer">
-                    <constructor-arg name="clientId" value="${users.client.id}" />
-                    <constructor-arg name="clientSecret" value="${users.client.password}" />
+                    <constructor-arg name="clientId" value="${userModel.client.id}" />
+                    <constructor-arg name="clientSecret" value="${userModel.client.password}" />
                 </bean>
             </util:list>
         </property>
