@@ -3,14 +3,10 @@ package com.home.automation.dispatcher.wsclient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandler;
-import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-
-import java.util.concurrent.TimeUnit;
 
 public class WsBoardClient {
 
@@ -42,14 +38,7 @@ public class WsBoardClient {
 
         try {
             setConnected(true);
-            final ListenableFuture<StompSession> connect = wsStompClient.connect(getUrl(), createHandshakeHandlers(), getSessionHandler());
-            connect.addCallback(successCallbackMsg -> {
-                System.out.println("successs callback: " + successCallbackMsg);
-                WsBoardClient.this.setConnected(true);
-            }, errorCallback -> {
-                System.out.println("error callback: " + errorCallback);
-                WsBoardClient.this.setConnected(false);
-            });
+            wsStompClient.connect(getUrl(), createHandshakeHeaders(), getSessionHandler());
 //            StompSession stompSession = connect.get(timeout, TimeUnit.MILLISECONDS);
 //            System.out.println(stompSession.getSessionId());
         } catch (Exception e) {
@@ -57,10 +46,10 @@ public class WsBoardClient {
         }
     }
 
-    private WebSocketHttpHeaders createHandshakeHandlers() {
+    private WebSocketHttpHeaders createHandshakeHeaders() {
         final WebSocketHttpHeaders wsHeaders = new WebSocketHttpHeaders();
         wsHeaders.add("Authorization", "Basic TODO: add some key here");
-        wsHeaders.add("subscriberId", "dispatcher");
+        wsHeaders.add("did", "dispatcher");
         return wsHeaders;
     }
 
@@ -68,7 +57,7 @@ public class WsBoardClient {
         return sessionHandler;
     }
 
-    public void setSessionHandler(WsBoardStompSessionHandler sessionHandler) {
+    public void setSessionHandler(final WsBoardStompSessionHandler sessionHandler) {
         sessionHandler.setWsBoardClient(this);
         this.sessionHandler = sessionHandler;
     }

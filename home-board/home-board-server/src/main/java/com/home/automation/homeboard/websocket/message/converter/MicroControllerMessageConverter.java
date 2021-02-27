@@ -9,6 +9,8 @@ public class MicroControllerMessageConverter extends AbstractBoardMessageConvert
 
     @Override
     public Optional<BaseBoardMessage> handleMessage(String msg) {
-        return Optional.of(new MicroControllerMessage());
+        final MicroControllerMessage microControllerMessage = new MicroControllerMessage();
+        microControllerMessage.setPayload(msg);
+        return Optional.of(microControllerMessage);
     }
 }

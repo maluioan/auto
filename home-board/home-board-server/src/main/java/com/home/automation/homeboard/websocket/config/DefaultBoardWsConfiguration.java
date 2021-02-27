@@ -1,6 +1,6 @@
 package com.home.automation.homeboard.websocket.config;
 
-import com.home.automation.homeboard.websocket.endpoint.BoardWsSubscribedClient;
+import com.home.automation.homeboard.websocket.endpointclient.BoardWsSubscribedClient;
 
 import javax.websocket.server.ServerEndpointConfig;
 

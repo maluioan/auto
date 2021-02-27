@@ -35,6 +35,7 @@ public class WsBoardStompSessionHandler extends StompSessionHandlerAdapter {
     @Override
     public void handleTransportError(StompSession stompSession, Throwable throwable) {
         logger.warn("transport error from ws server " + wsBoardClient.getUrl());
+        wsBoardClient.setConnected(false);
     }
 
     @Override
@@ -44,6 +45,7 @@ public class WsBoardStompSessionHandler extends StompSessionHandlerAdapter {
 
     @Override
     public void handleFrame(StompHeaders stompHeaders, Object o) {
+        System.out.println("frame handler");
         // TODO: add frame handler
     }
 

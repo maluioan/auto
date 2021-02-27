@@ -42,12 +42,17 @@
 
 
     <!-- Endpoints -->
-    <bean id="boardEndpoint" class="com.home.automation.homeboard.websocket.endpoint.WebSocketBoardSubscribedClient">
+    <bean id="baseEndpoint" class="com.home.automation.homeboard.websocket.endpointclient.BoardWsSubscribedClient" abstract="true">
+        <property name="subscriberRegistry" ref="subscriberRegistry"/>
+        <property name="messageMediator" ref="messageMediator"/>
+    </bean>
+
+    <bean id="boardEndpoint" class="com.home.automation.homeboard.websocket.endpointclient.MicroControllerWsClient" parent="baseEndpoint">
         <property name="path" value="/boards/server" />
         <property name="messageConverter" ref="boardMessageConverter"/>
     </bean>
 
-    <bean id="subscriberEndpoint" class="com.home.automation.homeboard.websocket.endpoint.WebSocketSubscriberSubscribedClient">
+    <bean id="subscriberEndpoint" class="com.home.automation.homeboard.websocket.endpointclient.DispatcherWsClient" parent="baseEndpoint">
         <property name="path" value="/subscriber/server" />
         <property name="messageConverter" ref="boardSubscriberConverter" />
     </bean>
@@ -61,4 +66,12 @@
         </property>
     </bean>
 
+    <!-- -->
+    <bean id="messageMediator" class="com.home.automation.homeboard.websocket.mediator.BoardMessageMediator">
+        <property name="subscriberRegistry" ref="subscriberRegistry"/>
+        <property name="messageExecutor" ref="boardMessageExecutor"/>
+    </bean>
+
+    <bean id="boardMessageExecutor" class="com.home.automation.homeboard.websocket.command.BoardMessageExecutor"/>
+    <bean id="subscriberRegistry" class="com.home.automation.homeboard.websocket.mediator.BoardSubscriberRegistry"/>
 </beans>

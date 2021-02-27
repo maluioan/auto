@@ -1,12 +1,10 @@
 package com.home.automation.homeboard.websocket.config;
 
-import com.home.automation.homeboard.websocket.endpoint.BoardWsSubscribedClient;
+import com.home.automation.homeboard.websocket.endpointclient.BoardWsSubscribedClient;
+import com.home.automation.homeboard.websocket.message.encoder.SimpleEncoder;
 import org.springframework.util.Assert;
 
-import javax.websocket.Decoder;
-import javax.websocket.Encoder;
-import javax.websocket.Extension;
-import javax.websocket.HandshakeResponse;
+import javax.websocket.*;
 import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerEndpointConfig;
 import java.util.*;
@@ -52,7 +50,8 @@ class BoardEndpointRegistration extends ServerEndpointConfig.Configurator implem
 
     @Override
     public List<Class<? extends Encoder>> getEncoders() {
-        return Collections.emptyList();
+        // TODO: no encoder issue, nu se paote ocoli??
+        return Arrays.asList(SimpleEncoder.class);
     }
 
     @Override

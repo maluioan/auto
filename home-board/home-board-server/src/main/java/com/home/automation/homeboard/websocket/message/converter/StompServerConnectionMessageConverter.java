@@ -1,7 +1,7 @@
 package com.home.automation.homeboard.websocket.message.converter;
 
 import com.home.automation.homeboard.websocket.message.BaseBoardMessage;
-import com.home.automation.homeboard.websocket.message.BoardCommandMessage;
+import com.home.automation.homeboard.websocket.message.DispatcherMessage;
 
 import java.util.Optional;
 
@@ -17,7 +17,7 @@ public class StompServerConnectionMessageConverter extends AbstractBoardMessageC
     }
 
     private BaseBoardMessage createInitialConnectionMessage(final String command, final String msg) {
-        final BoardCommandMessage bcm = new BoardCommandMessage();
+        final DispatcherMessage bcm = new DispatcherMessage();
         bcm.setPayload(msg);
         bcm.setCommand(command);
         return bcm;
