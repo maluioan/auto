@@ -24,6 +24,8 @@
     </div>
     <br />
     <div id="conversationDiv">
+        <input type="hidden" id="userName" value="${userName}"/>
+        <input type="hidden" id="dispatcherToken" value="${dispatcherToken}"/>
         <input type="text" id="text" placeholder="Write a message..."/>
         <button id="sendMessage" onclick="sendMessage();">Send</button>
         <p id="response"></p>

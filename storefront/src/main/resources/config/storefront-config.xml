@@ -20,6 +20,9 @@
             </util:list>
         </property>
     </bean>
+
+    <bean id="dispatcherClienRestTemplate" class="org.springframework.web.client.RestTemplate" />
+
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/view/"/>
         <property name="suffix" value=".jsp"/>
@@ -57,6 +60,12 @@
         <constructor-arg ref="userClientRestTemplate"/>
         <property name="host" value="localhost"/>
         <property name="port" value="8002"/>
+    </bean>
+
+    <bean id="dispatcherClient" class="com.home.automation.dispatcher.client.impl.DefaultDispatcherClient">
+        <constructor-arg ref="dispatcherClienRestTemplate"/>
+        <property name="host" value="localhost"/>
+        <property name="port" value="8004"/>
     </bean>
 
     <bean id="storeFrontUserService" class="com.storefront.service.impl.DefaultStoreFrontUserService">

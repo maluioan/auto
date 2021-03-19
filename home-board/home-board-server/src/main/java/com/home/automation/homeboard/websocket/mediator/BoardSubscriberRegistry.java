@@ -1,11 +1,11 @@
 package com.home.automation.homeboard.websocket.mediator;
 
 import com.home.automation.homeboard.websocket.Subscriber;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.Assert;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,7 +13,7 @@ public class BoardSubscriberRegistry implements SubscriberRegistry {
 
     protected static final Logger logger = LogManager.getLogger(SubscriberRegistry.class);
 
-    private List<Subscriber> dispatchers = Collections.synchronizedList(new ArrayList<>());
+    private Map<String, Subscriber> dispatchers = MapUtils.synchronizedMap(new HashMap<>());
 
     private Map<String, Subscriber> mcSubscribers = new ConcurrentHashMap<>();
 
@@ -43,8 +43,8 @@ public class BoardSubscriberRegistry implements SubscriberRegistry {
         Assert.notNull(dispatcher, "Dispatcher subscriber cannot be null");
 
         boolean registered = false;
-        if (!dispatchers.contains(dispatcher)) {
-            registered = dispatchers.add(dispatcher);
+        if (!dispatchers.containsKey(dispatcher.getIdentifier())) {
+            registered = dispatchers.put(dispatcher.getIdentifier(), dispatcher) != null;
 
         } else {
             logger.warn(String.format("Dispatcher subscriber %s is already present: ", dispatcher.getIdentifier()));
@@ -53,14 +53,14 @@ public class BoardSubscriberRegistry implements SubscriberRegistry {
     }
 
     @Override
-    public boolean removeDispatcherSubscriber(Subscriber dispatcher) {
-        Assert.notNull(dispatcher, "Dispatcher subscriber cannot be null");
-        return dispatchers.remove(dispatcher);
+    public Subscriber removeDispatcherSubscriber(String dispatcherId) {
+        Assert.notNull(dispatcherId, "Dispatcher subscriber cannot be null");
+        return dispatchers.remove(dispatcherId);
     }
 
     @Override
-    public List<Subscriber> getDispatchers() {
-        return dispatchers;
+    public List<Subscriber> getDispatchersSubscribers() {
+        return new ArrayList<>(dispatchers.values());
     }
 
     @Override

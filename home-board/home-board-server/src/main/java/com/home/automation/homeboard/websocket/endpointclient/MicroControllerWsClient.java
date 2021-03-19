@@ -5,7 +5,7 @@ import com.home.automation.homeboard.websocket.message.MicroControllerMessage;
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
 
-public class MicroControllerWsClient extends BoardWsSubscribedClient<MicroControllerMessage> {
+public class MicroControllerWsClient extends AbstractWsClient<MicroControllerMessage> {
 
     private String boardId;
 
@@ -28,7 +28,7 @@ public class MicroControllerWsClient extends BoardWsSubscribedClient<MicroContro
     @Override
     protected void onMessageInternal(final MicroControllerMessage microControllerMessage) {
         logger.info("am primit msg-ul de la board: " + microControllerMessage.getBoardId() + ", cu " + microControllerMessage.getType());
-        getMessageMediator().handleMicroControllerMessage(microControllerMessage);
+        getMessageMediator().handleDispatchMessage(microControllerMessage);
     }
 
     @Override

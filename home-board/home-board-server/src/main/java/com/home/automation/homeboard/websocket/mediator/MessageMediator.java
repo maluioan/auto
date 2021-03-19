@@ -1,12 +1,11 @@
 package com.home.automation.homeboard.websocket.mediator;
 
-import com.home.automation.homeboard.websocket.message.DispatcherMessage;
-import com.home.automation.homeboard.websocket.message.MicroControllerMessage;
+import com.home.automation.homeboard.websocket.message.BoardRequestMessage;
 
 public interface MessageMediator {
 
     // message handlers
-    void handleMicroControllerMessage(MicroControllerMessage mcMessage);
+    void handleDispatchMessage(BoardRequestMessage mcMessage);
 
-    void handleMicroControllerMessage(DispatcherMessage commandMessage);
+//    void handleDispatchMessage(BoardRequestMessage boardMessage);
 }

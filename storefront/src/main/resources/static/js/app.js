@@ -9,9 +9,19 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('http://localhost:8004/client/message');
+    var token = document.getElementById('dispatcherToken').value;
+    var socket = new SockJS('http://localhost:8004/client/message?dtk=' + token);
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function(frame) {
+    stompClient.reconnect_delay = 5000;
+
+    // TODO: try this
+    var headers = {
+        login: 'marius',
+        passcode: 'mypasscode',
+        host: 'host',
+        dispToken: document.getElementById('dispatcherToken').value
+    };
+    stompClient.connect(headers, function(frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
         subscribeTo("/command/board");
@@ -33,10 +43,9 @@ function subscribeTo(topic) {
 }
 
 function sendMessage() {
-    var from = document.getElementById('from').value;
     var text = document.getElementById('text').value;
     stompClient.send("/app/client/message", {},
-        JSON.stringify({'from':from, 'text':text}));
+        JSON.stringify({'commandId':text}));
 }
 
 function showMessageOutput(messageOutput) {

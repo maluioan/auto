@@ -24,7 +24,7 @@
         <module>home-board</module>
         <module>storefront</module>
         <module>users</module>
-        <module>home-messager</module>
+        <module>home-dispatcher</module>
     </modules>
 
     <dependencies>

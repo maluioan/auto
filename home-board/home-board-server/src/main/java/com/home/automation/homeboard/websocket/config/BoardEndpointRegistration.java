@@ -1,6 +1,7 @@
 package com.home.automation.homeboard.websocket.config;
 
-import com.home.automation.homeboard.websocket.endpointclient.BoardWsSubscribedClient;
+import com.home.automation.homeboard.websocket.endpointclient.AbstractWsClient;
+import com.home.automation.homeboard.websocket.message.decoder.SimpleDecoder;
 import com.home.automation.homeboard.websocket.message.encoder.SimpleEncoder;
 import org.springframework.util.Assert;
 
@@ -11,26 +12,26 @@ import java.util.*;
 
 class BoardEndpointRegistration extends ServerEndpointConfig.Configurator implements ServerEndpointConfig {
 
-    private final BoardWsSubscribedClient boardWsSubscribedClient;
+    private final AbstractWsClient abstractWsClient;
 
-    BoardEndpointRegistration(final BoardWsSubscribedClient boardWsSubscribedClient) {
-        Assert.notNull(boardWsSubscribedClient, "Board ws endpoijtn must not be null");
-        this.boardWsSubscribedClient = boardWsSubscribedClient;
+    BoardEndpointRegistration(final AbstractWsClient abstractWsClient) {
+        Assert.notNull(abstractWsClient, "Board ws endpoijtn must not be null");
+        this.abstractWsClient = abstractWsClient;
     }
 
     @Override
     public Class<?> getEndpointClass() {
-        return boardWsSubscribedClient.getClass();
+        return abstractWsClient.getClass();
     }
 
     @Override
     public <T> T getEndpointInstance(Class<T> endpointClass) throws InstantiationException {
-        return (T) boardWsSubscribedClient;
+        return (T) abstractWsClient;
     }
 
     @Override
     public String getPath() {
-        return boardWsSubscribedClient.getPath();
+        return abstractWsClient.getPath();
     }
 
     @Override
@@ -51,17 +52,17 @@ class BoardEndpointRegistration extends ServerEndpointConfig.Configurator implem
     @Override
     public List<Class<? extends Encoder>> getEncoders() {
         // TODO: no encoder issue, nu se paote ocoli??
-        return Arrays.asList(SimpleEncoder.class);
+        return abstractWsClient.getEncoders();
     }
 
     @Override
     public List<Class<? extends Decoder>> getDecoders() {
-        return Collections.emptyList();
+        return abstractWsClient.getDecoders();
     }
 
     @Override
     public void modifyHandshake(ServerEndpointConfig sec, HandshakeRequest request, HandshakeResponse response) {
-        boardWsSubscribedClient.handleHandshake(sec, request, response);
+        abstractWsClient.handleHandshake(sec, request, response);
     }
 
     @Override

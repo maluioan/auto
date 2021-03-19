@@ -11,11 +11,13 @@ public interface SubscriberRegistry {
 
     boolean removeMicroControllerSubscriber(Subscriber microController);
 
+
     boolean registerDispatcherSubscriber(Subscriber dispatcher);
 
-    boolean removeDispatcherSubscriber(Subscriber dispatcher);
+    Subscriber removeDispatcherSubscriber(String dispatcherId);
 
-    List<Subscriber> getDispatchers();
+
+    List<Subscriber> getDispatchersSubscribers();
 
     Optional<Subscriber> getMicrControllerByID(String id);
 }

@@ -1,6 +1,6 @@
 package com.home.automation.homeboard.websocket.message;
 
-public class MicroControllerMessage extends BaseBoardMessage {
+public class MicroControllerMessage extends BoardRequestMessage {
     private String boardId;
     private String type;
 

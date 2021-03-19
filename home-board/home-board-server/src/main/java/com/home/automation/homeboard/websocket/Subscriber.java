@@ -20,6 +20,12 @@ public interface Subscriber {
 
     /**
      *
+     * @return
+     */
+//    String getSubscriptionId();
+
+    /**
+     *
      * @param payload
      */
     default void sendMessage(Object payload) {

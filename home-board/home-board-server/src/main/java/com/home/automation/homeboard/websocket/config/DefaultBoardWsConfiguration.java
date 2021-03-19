@@ -1,26 +1,26 @@
 package com.home.automation.homeboard.websocket.config;
 
-import com.home.automation.homeboard.websocket.endpointclient.BoardWsSubscribedClient;
+import com.home.automation.homeboard.websocket.endpointclient.AbstractWsClient;
 
 import javax.websocket.server.ServerEndpointConfig;
 
 public class DefaultBoardWsConfiguration implements BoardWsConfiguration {
 
-    private BoardWsSubscribedClient boardWsSubscribedClient;
+    private AbstractWsClient abstractWsClient;
 
     @Override
     public String[] getPath() {
-        final String path = boardWsSubscribedClient.getPath();
+        final String path = abstractWsClient.getPath();
         return path != null ? path.split("/") : new String[]{};
     }
 
-    public void setBoardWsSubscribedClient(BoardWsSubscribedClient boardWsSubscribedClient) {
-        this.boardWsSubscribedClient = boardWsSubscribedClient;
+    public void setAbstractWsClient(AbstractWsClient abstractWsClient) {
+        this.abstractWsClient = abstractWsClient;
     }
 
     @Override
     public ServerEndpointConfig getServerEnpointConfig() {
-        return new BoardEndpointRegistration(boardWsSubscribedClient);
+        return new BoardEndpointRegistration(abstractWsClient);
     }
 
 }

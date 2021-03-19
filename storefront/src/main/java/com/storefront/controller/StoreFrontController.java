@@ -1,6 +1,7 @@
 package com.storefront.controller;
 
 import com.home.automation.users.dto.UserData;
+import com.storefront.service.DispatcherService;
 import com.storefront.service.StoreFrontUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -17,12 +18,17 @@ public class StoreFrontController {
     @Autowired
     private StoreFrontUserService storeFrontUserService;
 
+    @Autowired
+    private DispatcherService dispatcherService;
+
     @GetMapping
     public String home(final Model model) {
         final UserData sessionUser = storeFrontUserService.getSessionUser();
-        model.addAttribute("name", sessionUser.getUserName());
+        final String userName = sessionUser.getUserName();
+        model.addAttribute("userName",userName );
         model.addAttribute("host", getHost());
         model.addAttribute("port", getPort());
+        model.addAttribute("dispatcherToken", dispatcherService.getDispatcherToken(userName));
         return "home";
     }
 
