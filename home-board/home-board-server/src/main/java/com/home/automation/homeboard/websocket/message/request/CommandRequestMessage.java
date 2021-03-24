@@ -1,7 +1,8 @@
-package com.home.automation.homeboard.websocket.message;
+package com.home.automation.homeboard.websocket.message.request;
 
-public class CommandRequestMessage extends BoardRequestMessage {
-
+// TODO: maybe create an inner class in the proper handler
+public class CommandRequestMessage extends BoardRequestMessage
+{
     private String commandId;
     private String userName;
 

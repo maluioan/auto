@@ -29,7 +29,7 @@ public class WsBoardClient {
         wsStompClient = new WebSocketStompClient(new StandardWebSocketClient()) {
             @Override
             protected ConnectionHandlingStompSession createSession(@Nullable StompHeaders connectHeaders, StompSessionHandler handler) {
-                DefaultStompSession session = new WsNonSubscripableStompSession(handler, super.processConnectHeaders(connectHeaders));
+                final DefaultStompSession session = new WsNonSubscripableStompSession(handler, super.processConnectHeaders(connectHeaders));
                 session.setMessageConverter(super.getMessageConverter());
                 session.setTaskScheduler(super.getTaskScheduler());
                 session.setReceiptTimeLimit(super.getReceiptTimeLimit());

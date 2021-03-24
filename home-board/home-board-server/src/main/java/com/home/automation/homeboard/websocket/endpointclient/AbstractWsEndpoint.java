@@ -1,12 +1,13 @@
 package com.home.automation.homeboard.websocket.endpointclient;
 
 import com.home.automation.homeboard.websocket.Subscriber;
+import com.home.automation.homeboard.websocket.handler.WsRequestHandler;
 import com.home.automation.homeboard.websocket.mediator.MessageMediator;
 import com.home.automation.homeboard.websocket.mediator.SubscriberRegistry;
-import com.home.automation.homeboard.websocket.message.BoardRequestMessage;
-import com.home.automation.homeboard.websocket.message.converter.BoardMessageCoder;
+import com.home.automation.homeboard.websocket.message.converter.WSRequestConverter;
 import com.home.automation.homeboard.websocket.message.decoder.SimpleDecoder;
 import com.home.automation.homeboard.websocket.message.encoder.SimpleEncoder;
+import com.home.automation.homeboard.websocket.message.request.WSRequest;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,21 +20,21 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractWsClient<MSG extends BoardRequestMessage> extends Endpoint implements Subscriber {
+public abstract class AbstractWsEndpoint<REQUEST extends WSRequest> extends Endpoint implements Subscriber {
 
-    protected final Logger logger = LogManager.getLogger(AbstractWsClient.class);
+    protected final Logger logger = LogManager.getLogger(AbstractWsEndpoint.class);
 
     public static final String ENCODER_CONVERTER = "encoderConverter";
     public static final String DECODER_CONVERTER = "decoderConverter";
-
     private static final String HANDSHAKE_REQUEST = "handshakeRequest";
 
-    private final BoardWsMessageHandler msgHandler = new BoardWsMessageHandler();
+    private final EndpointWsMessageHandler msgHandler = new EndpointWsMessageHandler();
 
     private SubscriberRegistry subscriberRegistry;
     private MessageMediator messageMediator;
 
-    private BoardMessageCoder<MSG> coderEncoderConverter;
+    private WSRequestConverter<REQUEST> coderEncoderConverter;
+    private List<WsRequestHandler<REQUEST>> requestMessageHandlers;
     protected HandshakeRequest handshakeRequest;
     protected Session wsSession;
     private String path;
@@ -62,7 +63,7 @@ public abstract class AbstractWsClient<MSG extends BoardRequestMessage> extends 
      *
      * @param boardMessage
      */
-    protected abstract void onMessageInternal(MSG boardMessage);
+    protected abstract void onMessageInternal(REQUEST boardMessage);
 
     public void disconnect() {
         try {
@@ -132,9 +133,19 @@ public abstract class AbstractWsClient<MSG extends BoardRequestMessage> extends 
         this.path = path;
     }
 
-    public void setCoderEncoderConverter(BoardMessageCoder coderEncoderConverter) {
+    public void setCoderEncoderConverter(WSRequestConverter coderEncoderConverter) {
         Assert.notNull(coderEncoderConverter, "Board msg converter should not be null");
         this.coderEncoderConverter = coderEncoderConverter;
+    }
+
+    protected List<WsRequestHandler<REQUEST>> getRequestMessageHandlers()
+    {
+        return requestMessageHandlers;
+    }
+
+    public void setRequestMessageHandlers(List<WsRequestHandler<REQUEST>> requestMessageHandlers)
+    {
+        this.requestMessageHandlers = requestMessageHandlers;
     }
 
     protected SubscriberRegistry getSubscriberRegistry() {
@@ -164,14 +175,15 @@ public abstract class AbstractWsClient<MSG extends BoardRequestMessage> extends 
     /**
      * message handler class
      */
-    class BoardWsMessageHandler implements MessageHandler.Whole<BoardRequestMessage> {
+    class EndpointWsMessageHandler implements MessageHandler.Whole<REQUEST> {
 
         @Override
-        public void onMessage(final BoardRequestMessage boardMessage) {
+        public void onMessage(final REQUEST stompRequest) {
             try {
-                onMessageInternal((MSG)boardMessage);
+                stompRequest.setReceivingSubscriber(AbstractWsEndpoint.this);
+                onMessageInternal(stompRequest);
             } catch (Exception e) {
-                logger.error("Failed on message internal for msg: " + boardMessage);
+                logger.error("Failed on message internal for msg: " + stompRequest.getExecutionId());
             }
         }
     }

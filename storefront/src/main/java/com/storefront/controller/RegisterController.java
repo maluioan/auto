@@ -41,7 +41,6 @@ public class RegisterController {
         final CreateUserDataResultData userResult = storeFrontUserService.createUser(user);
 
         String returnUrl;
-        // TODO: add and replace apache utils
         if (CollectionUtils.isNotEmpty(userResult.getErrorMessages())) {
             redirectModel.addFlashAttribute("registerErrors", userResult.getErrorMessages());
             redirectModel.addFlashAttribute("registerUserForm", registerUserForm);

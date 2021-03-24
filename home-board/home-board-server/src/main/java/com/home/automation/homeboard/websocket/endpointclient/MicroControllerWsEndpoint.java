@@ -1,11 +1,12 @@
 package com.home.automation.homeboard.websocket.endpointclient;
 
-import com.home.automation.homeboard.websocket.message.MicroControllerMessage;
+import com.home.automation.homeboard.websocket.message.request.PioRequest;
 
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
 
-public class MicroControllerWsClient extends AbstractWsClient<MicroControllerMessage> {
+public class MicroControllerWsEndpoint extends AbstractWsEndpoint<PioRequest>
+{
 
     private String boardId;
 
@@ -26,9 +27,9 @@ public class MicroControllerWsClient extends AbstractWsClient<MicroControllerMes
     }
 
     @Override
-    protected void onMessageInternal(final MicroControllerMessage microControllerMessage) {
-        logger.info("am primit msg-ul de la board: " + microControllerMessage.getBoardId() + ", cu " + microControllerMessage.getType());
-        getMessageMediator().handleDispatchMessage(microControllerMessage);
+    protected void onMessageInternal(final PioRequest microControllerMessage) {
+//        logger.info("am primit msg-ul de la board: " + microControllerMessage.getBoardId() + ", cu " + microControllerMessage.getType());
+//        getMessageMediator().handleDispatchMessage(microControllerMessage);
     }
 
     @Override

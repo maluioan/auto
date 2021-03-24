@@ -34,37 +34,41 @@
 
     <!-- Endpoints configuration -->
     <bean id="boardWsBoardConfig" class="com.home.automation.homeboard.websocket.config.DefaultBoardWsConfiguration">
-        <property name="abstractWsClient" ref="boardEndpoint"/>
+        <property name="abstractWsEndpoint" ref="boardEndpoint"/>
     </bean>
     <bean id="subscribeWsBoardConfig" class="com.home.automation.homeboard.websocket.config.DefaultBoardWsConfiguration">
-        <property name="abstractWsClient" ref="subscriberEndpoint"/>
+        <property name="abstractWsEndpoint" ref="subscriberEndpoint"/>
     </bean>
 
 
     <!-- Endpoints -->
-    <bean id="baseEndpoint" class="com.home.automation.homeboard.websocket.endpointclient.AbstractWsClient" abstract="true">
+    <bean id="baseEndpoint" class="com.home.automation.homeboard.websocket.endpointclient.AbstractWsEndpoint" abstract="true">
         <property name="subscriberRegistry" ref="subscriberRegistry"/>
         <property name="messageMediator" ref="messageMediator"/>
     </bean>
 
-    <bean id="boardEndpoint" class="com.home.automation.homeboard.websocket.endpointclient.MicroControllerWsClient" parent="baseEndpoint">
+    <bean id="boardEndpoint" class="com.home.automation.homeboard.websocket.endpointclient.MicroControllerWsEndpoint" parent="baseEndpoint">
         <property name="path" value="/boards/server" />
-        <property name="coderEncoderConverter" ref="boardMessageConverter"/>
+<!--        <property name="coderEncoderConverter" ref="boardMessageConverter"/>-->
     </bean>
 
-    <bean id="subscriberEndpoint" class="com.home.automation.homeboard.websocket.endpointclient.CommandReceiverWsClient" parent="baseEndpoint">
+    <bean id="subscriberEndpoint" class="com.home.automation.homeboard.websocket.endpointclient.CommandReceiverWsEndpoint" parent="baseEndpoint">
         <property name="path" value="/subscriber/server" />
-        <property name="coderEncoderConverter" ref="boardSubscriberConverter" />
+        <property name="coderEncoderConverter" ref="stompRequestConverter" />
+        <property name="requestMessageHandlers">
+            <list>
+                <bean class="com.home.automation.homeboard.websocket.handler.ConnectWsRequestHandler"/>
+                <bean class="com.home.automation.homeboard.websocket.handler.CommandWsRequestHandler">
+                    <property name="mapper" ref="jacksonMapper"/>
+                    <property name="commandDestination" value="${command.execution.destination}"/>
+                </bean>
+            </list>
+        </property>
     </bean>
 
+    <bean id="jacksonMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
 
-    <!-- Board message converters-->
-    <bean id="boardMessageConverter" class="com.home.automation.homeboard.websocket.message.converter.MicroControllerMessageCoder">
-        <!--<property name="nextMessageConverter" ref=""/>-->
-    </bean>
-
-    <bean id="boardSubscriberConverter" class="com.home.automation.homeboard.websocket.message.converter.StompServerConnectionMessageCoder"/>
-
+    <bean id="stompRequestConverter" class="com.home.automation.homeboard.websocket.message.converter.StompRequestConverter" />
 
     <!-- -->
     <bean id="messageMediator" class="com.home.automation.homeboard.websocket.mediator.BoardMessageMediator">
