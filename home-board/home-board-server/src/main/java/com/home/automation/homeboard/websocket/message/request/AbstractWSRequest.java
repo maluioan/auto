@@ -4,30 +4,30 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.home.automation.homeboard.websocket.Subscriber;
 
 
-public abstract class AbstractWSRequest implements WSRequest
+public abstract class AbstractWSRequest<PAYLOAD> implements WSRequest<PAYLOAD>
 {
 	@JsonIgnore
-	private Subscriber receivingSubscriber;
-	private Object payload;
+	private Subscriber initiatingSubscriber;
+	private PAYLOAD payload;
 
 	@Override
-	public void setReceivingSubscriber(final Subscriber receivingSubscriber)
+	public void setInitiatingSubscriber(final Subscriber initiatingSubscriber)
 	{
-		this.receivingSubscriber = receivingSubscriber;
+		this.initiatingSubscriber = initiatingSubscriber;
 	}
 
 	@Override
-	public Subscriber getReceivingSubscriber()
+	public Subscriber getInitiatingSubscriber()
 	{
-		return this.receivingSubscriber;
+		return this.initiatingSubscriber;
 	}
 
 	@Override
-	public Object getPayload() {
+	public PAYLOAD getPayload() {
 		return payload;
 	}
 
-	public void setPayload(Object payload) {
+	public void setPayload(PAYLOAD payload) {
 		this.payload = payload;
 	}
 }

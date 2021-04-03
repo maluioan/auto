@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 // LINK: http://blog.progs.be/542/date-to-java-time
 // TODO: is this session scoper or app scoped?
+// TODO: this is not called, it has no effect
 @Component
 public class BaseUpdatableInterceptor implements HomeHibernateInterceptor<BaseModel> {
 

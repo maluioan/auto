@@ -1,12 +1,14 @@
 package com.home.automation.util;
 
-import java.time.LocalDate;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 public final class CommonUtils {
 
-    private static final String DEFAULT_TIME_FORMAT = "dd-LLLL-yyyy HH:mm:s";
+    private static final String DEFAULT_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
 
     public static String createRandomSixDigitsId() {
         // TODO: fa o metod generala care primeste un int si genereaza un id pe baza nr de cifre indicate de int-ul ala
@@ -16,7 +18,8 @@ public final class CommonUtils {
     }
 
     public static String getCurrentDate() {
-        final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT);
-        return DATE_TIME_FORMATTER.format(LocalDate.now());
+        final LocalDateTime ldt = Instant.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        final DateTimeFormatter fmt = DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT);
+        return ldt.format(fmt);
     }
 }

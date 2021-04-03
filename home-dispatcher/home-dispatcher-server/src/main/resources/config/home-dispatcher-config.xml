@@ -4,14 +4,18 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
-    <bean id="wsBoardClient" class="com.home.automation.dispatcher.wsclient.WsBoardClient">
+    <bean id="wsBoardClient" class="com.home.automation.dispatcher.wsclient.DefaultWsBoardClient">
         <property name="url" value="${board.server.ws.endpoint}"/>
         <!--<property name="timeout" value="${board.server.ws.timeout}"/>-->
         <property name="boardCommunicationPath" value="${board.server.ws.communication}"/>
         <property name="clientId" value="dispatcher"/>
     </bean>
 
-    <bean class="com.home.automation.dispatcher.schedulers.WsClientConnectionScheduler">
+    <bean id="wsObservedBoardClient" class="com.home.automation.dispatcher.wsclient.DelegatingObservableWsBoardClient">
         <constructor-arg ref="wsBoardClient"/>
+    </bean>
+
+    <bean class="com.home.automation.dispatcher.schedulers.WsClientConnectionScheduler">
+        <constructor-arg ref="wsObservedBoardClient"/>
     </bean>
 </beans>

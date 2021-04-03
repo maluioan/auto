@@ -5,13 +5,13 @@ import com.home.automation.homeboard.websocket.Subscriber;
 import java.util.Optional;
 
 
-public interface WSRequest
+public interface WSRequest<PAYLOAD>
 {
-	Optional<String> getExecutionId();
+	Optional<String> getMessageId();
 
-	void setReceivingSubscriber(Subscriber subscriber);
+	void setInitiatingSubscriber(Subscriber subscriber);
 
-	Subscriber getReceivingSubscriber();
+	Subscriber getInitiatingSubscriber();
 
-	Object getPayload();
+	PAYLOAD getPayload();
 }

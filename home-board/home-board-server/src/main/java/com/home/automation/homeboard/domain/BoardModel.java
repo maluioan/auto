@@ -6,11 +6,16 @@ import java.util.Set;
 @Entity(name = "boards")
 public class BoardModel extends BaseModel {
 
+    public static final String FIND_BOARD_WITH_ID = "BoardModel.findById";
+
     @Column(name  = "name")
     private String name;
 
     @Column(name = "description")
     private String description;
+
+    @Column(name  = "externalBoardId")
+    private String externalBoardId;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ActionModel> actions;
@@ -39,4 +44,11 @@ public class BoardModel extends BaseModel {
         this.actions = actions;
     }
 
+    public String getExternalBoardId() {
+        return externalBoardId;
+    }
+
+    public void setExternalBoardId(String externalBoardId) {
+        this.externalBoardId = externalBoardId;
+    }
 }

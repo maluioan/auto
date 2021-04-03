@@ -1,12 +1,15 @@
 package com.home.automation.dispatcher.wsclient;
 
 import org.apache.commons.logging.Log;
+import org.springframework.core.ResolvableType;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.converter.MessageConversionException;
 import org.springframework.messaging.simp.SimpLogging;
 import org.springframework.messaging.simp.stomp.*;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.util.Assert;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +32,16 @@ class WsNonSubscripableStompSession extends DefaultStompSession {
         final StompHeaders stompNativeHeaders = StompHeaders.readOnlyStompHeaders(nativeHeaders);
 
         if (StompCommand.MESSAGE.equals(command)) {
-            final Object messageObject = getMessageConverter().fromMessage(message, String.class);
-            getSessionHandler().handleFrame(stompNativeHeaders, messageObject);
+            Type payloadType = getSessionHandler().getPayloadType(stompNativeHeaders);
+            Class<?> resolvedType = ResolvableType.forType(payloadType).resolve();
+            if (resolvedType != null) {
+                stompNativeHeaders.setSession(getSessionId());
+                final Object messageObject = getMessageConverter().fromMessage(message, resolvedType);
+                // TODO: treat null cases for messageObject
+                getSessionHandler().handleFrame(stompNativeHeaders, messageObject);
+            } else {
+                throw new MessageConversionException("Unresolvable payload type [" + payloadType + "] from handler type [" + getSessionHandler().getClass() + "]");
+            }
         } else {
             super.handleMessage(message);
         }

@@ -1,15 +1,39 @@
 package com.home.automation.homeboard.websocket.message.converter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.home.automation.homeboard.exception.BoardServiceException;
 import com.home.automation.homeboard.websocket.message.MessageType;
 import com.home.automation.homeboard.websocket.message.request.StompRequest;
+import com.home.automation.homeboard.ws.CommandMessagePayload;
+import com.home.automation.homeboard.ws.SimpleWSMessagePayload;
+import com.home.automation.homeboard.ws.WSMessagePayload;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.MediaType;
+import org.springframework.util.Assert;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class StompRequestConverter implements WSRequestConverter<StompRequest>
 {
+	private static final String NONE = "NONE/NONE";
+	private Map<MediaType, TypeConverterHelper<String, WSMessagePayload>> payloadConverters = new HashMap<>();
+
+	private ObjectMapper mapper;
+
+	@PostConstruct
+	public void afterPropertiesSet() {
+		payloadConverters.put(MediaType.APPLICATION_JSON, new JsonConverter());
+		payloadConverters.put(MediaType.valueOf(NONE), new SimpleMessageConverter());
+	}
+
 	@Override
 	public Optional<StompRequest> decodeMessage(final String message) {
 		final String[] split = message.split("\n");
@@ -22,15 +46,29 @@ public class StompRequestConverter implements WSRequestConverter<StompRequest>
 	}
 
 	@Override
-	public String encodeMessage(final StompRequest request)
-	{
-		final String headers = request.getMessageHeaders().entrySet().stream()
-				.map(entry -> String.format("%s: %s", entry.getKey(), entry.getValue()))
+	public String encodeMessage(final StompRequest request)	{
+		Assert.notNull(request.getMessageType(), "Type should not be null for decoding");
+
+		final String headers = MapUtils.emptyIfNull(request.getMessageHeaders()).entrySet().stream()
+				.map(entry -> String.format("%s:%s", entry.getKey(), entry.getValue()))
 				.collect(Collectors.joining("\n"));
 
-		return new StringBuilder(request.getMessageType().name())
-				.append("\n").append(headers).append("\n\n")
-				.append(request.getPayload()).toString();
+		final StringBuilder builder = new StringBuilder(request.getMessageType().name()).append("\n");
+		if (StringUtils.isNotEmpty(headers)) {
+			builder.append(headers).append("\n\n");
+		}
+		if (request.getPayload() != null) {
+			builder.append(findPayloadConverter(request).encodeMessage(request.getPayload()));
+		}
+
+		builder.append("\0");
+		return builder.toString();
+	}
+
+	public void setMapper(ObjectMapper mapper) {
+		Assert.notNull(mapper, "mapper should not be null");
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		this.mapper = mapper;
 	}
 
 	private StompRequest createInitialStompMessage(final MessageType messageType, final Object msg) {
@@ -42,8 +80,17 @@ public class StompRequestConverter implements WSRequestConverter<StompRequest>
 		final StompRequest stompRequest = new StompRequest();
 		stompRequest.setMessageType(messageType);
 		stompRequest.setMessageHeaders(createMapHeader(stompParts[0]));
-		stompRequest.setPayload(stompParts[1]);
+		stompRequest.setPayload(findPayloadConverter(stompRequest).decodeMessage(stompParts[1]));
 		return stompRequest;
+	}
+
+	private TypeConverterHelper<String, WSMessagePayload> findPayloadConverter(final StompRequest stompRequest) {
+		final Optional<String> contentType = stompRequest.getContentType();
+		// TODO: daca content type-ul nu are un convertor
+		final MediaType mediaType = contentType.map(MediaType::valueOf).orElse(MediaType.valueOf(NONE));
+		return payloadConverters.containsKey(mediaType)
+				? payloadConverters.get(mediaType)
+				: payloadConverters.get(MediaType.valueOf(NONE));
 	}
 
 	private Optional<MessageType> findMessageType(final String command) {
@@ -60,72 +107,44 @@ public class StompRequestConverter implements WSRequestConverter<StompRequest>
 				.map(headerPart -> headerPart.split(":"))
 				.collect(Collectors.toMap(headerPart -> headerPart[0], headerPart -> headerPart[1]));
 	}
+
+	private class JsonConverter implements TypeConverterHelper<String, WSMessagePayload> {
+		@Override
+		public String encodeMessage(final WSMessagePayload payload) {
+			try
+			{
+				return mapper.writeValueAsString(payload);
+			}
+			catch (JsonProcessingException e)
+			{
+				throw new BoardServiceException("Cannot parse json payload", e);
+			}
+		}
+
+		@Override
+		public CommandMessagePayload decodeMessage(String payload) {
+			try
+			{
+				return mapper.readValue(String.valueOf(payload), CommandMessagePayload.class);
+			}
+			catch (JsonProcessingException e)
+			{
+				throw new BoardServiceException("Cannot parse json payload", e);
+			}
+		}
+	}
+
+	private class SimpleMessageConverter implements TypeConverterHelper<String, WSMessagePayload> {
+		@Override
+		public String encodeMessage(WSMessagePayload payload) {
+			return SimpleWSMessagePayload.class.equals(payload.getType())
+					? ((SimpleWSMessagePayload)payload).getPayload()
+					: null;
+		}
+
+		@Override
+		public WSMessagePayload decodeMessage(String payload) {
+			return new SimpleWSMessagePayload(payload);
+		}
+	}
 }
-
-
-
-
-
-//public class StompMessageConverter implements PiRequestConverter<StompRequest>
-//{
-//	private ObjectMapper mapper;
-//
-//	private StompRequestExtractor stompRequestExtractor;
-//
-//	@Override
-//	public Optional<BoardRequestMessage> decodeMessage(final String message) {
-//		final Optional<StompRequest> stompRequest = stompRequestExtractor.extractStompRequest(message);
-//		return stompRequest.map(this::createBoardRequestMessage);
-//	}
-//
-//	private BoardRequestMessage createBoardRequestMessage(final StompRequest stompRequest) {
-//		BoardRequestMessage boardRequestMessage = null;
-//
-//		if (MessageType.CONNECT.equals(stompRequest.getMessageType())) {
-//			boardRequestMessage = new ConnectRequestMessage();
-//
-//		} else {
-//			checkPayloadRequest(stompRequest);
-//
-//			if ("command-request".equals(stompRequest.getRequestType())) {
-//				boardRequestMessage = parsePayload(stompRequest.getOriginalPayload());
-//			}
-//		}
-//
-//		if (boardRequestMessage != null) {
-//			boardRequestMessage.setStompRequest(stompRequest);
-//		}
-//		return boardRequestMessage;
-//	}
-//
-//	private void checkPayloadRequest(StompRequest stompRequest)
-//	{
-//		final Optional<String> requestType = stompRequest.getRequestType();
-//		requestType.orElseThrow(() -> new IllegalStateException(
-//				String.format("Cannot find request type from message ", stompRequest.getExecutionId())));
-//	}
-//
-//	private BoardRequestMessage parsePayload(final Object originalPayload)
-//	{
-//		BoardRequestMessage request = null;
-//		try
-//		{
-//			request = mapper.readValue(String.valueOf(originalPayload), CommandRequestMessage.class);
-//		}
-//		catch (JsonProcessingException e)
-//		{
-//			e.printStackTrace();
-//		}
-//		return request;
-//	}
-//
-//	public void setMapper(ObjectMapper mapper)
-//	{
-//		this.mapper = mapper;
-//	}
-//
-//	public void setStompRequestExtractor(StompRequestExtractor stompRequestExtractor)
-//	{
-//		this.stompRequestExtractor = stompRequestExtractor;
-//	}
-//}

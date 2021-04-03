@@ -175,15 +175,16 @@ public abstract class AbstractWsEndpoint<REQUEST extends WSRequest> extends Endp
     /**
      * message handler class
      */
-    class EndpointWsMessageHandler implements MessageHandler.Whole<REQUEST> {
+    class EndpointWsMessageHandler implements MessageHandler.Whole<WSRequest> {
 
         @Override
-        public void onMessage(final REQUEST stompRequest) {
+        public void onMessage(final WSRequest stompRequest) {
             try {
-                stompRequest.setReceivingSubscriber(AbstractWsEndpoint.this);
-                onMessageInternal(stompRequest);
+                stompRequest.setInitiatingSubscriber(AbstractWsEndpoint.this);
+                onMessageInternal((REQUEST) stompRequest);
             } catch (Exception e) {
-                logger.error("Failed on message internal for msg: " + stompRequest.getExecutionId());
+                logger.error("Failed on message internal for msg %s, for type %s " + stompRequest.getMessageId());
+                throw new RuntimeException("Error on receving message"); // TODO: add a custom exception
             }
         }
     }

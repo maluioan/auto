@@ -9,4 +9,10 @@ public interface WSRequestConverter<T extends WSRequest> {
     Optional<T> decodeMessage(String msg);
 
     String encodeMessage(T request);
+
+    interface TypeConverterHelper<String, T> {
+        String encodeMessage(T payload);
+
+        T decodeMessage(String payload);
+    }
 }

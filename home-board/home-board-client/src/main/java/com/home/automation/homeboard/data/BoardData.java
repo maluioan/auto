@@ -8,6 +8,7 @@ public class BoardData extends BaseData {
     private String name;
     private String description;
     private List<ActionData> actions;
+    private String externalBoardId;
 
     public String getName() {
         return name;
@@ -31,5 +32,13 @@ public class BoardData extends BaseData {
 
     public void setActions(List<ActionData> actions) {
         this.actions = actions;
+    }
+
+    public String getExternalBoardId() {
+        return externalBoardId;
+    }
+
+    public void setExternalBoardId(String externalBoardId) {
+        this.externalBoardId = externalBoardId;
     }
 }

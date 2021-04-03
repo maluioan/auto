@@ -19,5 +19,7 @@ public interface SubscriberRegistry {
 
     List<Subscriber> getDispatchersSubscribers();
 
-    Optional<Subscriber> getMicrControllerByID(String id);
+    Optional<Subscriber> getMicroControllerByID(String id);
+
+    boolean isMicroControllerBoardSubscribed(String microBoardId);
 }

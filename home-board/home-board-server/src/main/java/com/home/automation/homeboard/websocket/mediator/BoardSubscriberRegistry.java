@@ -64,7 +64,12 @@ public class BoardSubscriberRegistry implements SubscriberRegistry {
     }
 
     @Override
-    public Optional<Subscriber> getMicrControllerByID(String id) {
+    public Optional<Subscriber> getMicroControllerByID(String id) {
         return Optional.ofNullable(this.mcSubscribers.get(id));
+    }
+
+    @Override
+    public boolean isMicroControllerBoardSubscribed(String microBoardId) {
+        return this.mcSubscribers.containsKey(microBoardId);
     }
 }

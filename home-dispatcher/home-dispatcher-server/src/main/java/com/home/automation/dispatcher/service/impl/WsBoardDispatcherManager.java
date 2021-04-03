@@ -1,40 +1,36 @@
 package com.home.automation.dispatcher.service.impl;
 
-import com.home.automation.dispatcher.messages.CommandMessageClient;
 import com.home.automation.dispatcher.service.DispatcherService;
 import com.home.automation.dispatcher.wsclient.WsBoardClient;
-import com.home.automation.dispatcher.wsclient.messages.OutgoingWsMessage;
+import com.home.automation.dispatcher.wsclient.messages.BoardStompMessage;
+import com.home.automation.homeboard.ws.CommandMessagePayload;
+import com.home.automation.homeboard.ws.WSMessagePayload;
 import com.home.automation.util.CommonUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
-
-import static com.home.automation.util.CommonUtils.getCurrentDate;
+import javax.annotation.Resource;
 
 @Component
 public class WsBoardDispatcherManager implements DispatcherService {
 
-    @Autowired
+    @Resource(name = "wsObservedBoardClient")
     private WsBoardClient wsBoardClient;
-
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public void sendMessageWithFeedback(String commandId, String userName) {
-        wsBoardClient.sendMessage(createOutgoingWsMessage(commandId, userName));
+        final BoardStompMessage stompMessage = new BoardStompMessage();
+        stompMessage.setMessageId(CommonUtils.createRandomSixDigitsId());
+        stompMessage.setPayload(createCommandMessage(commandId, userName));
+
+        wsBoardClient.sendMessage(stompMessage);
     }
 
-    private OutgoingWsMessage createOutgoingWsMessage(final String commandId, final String userName) {
-        final OutgoingWsMessage owm = new OutgoingWsMessage();
+    private CommandMessagePayload createCommandMessage(final String commandId, final String userName) {
+        final CommandMessagePayload owm = new CommandMessagePayload();
         owm.setCommandId(commandId);
-        owm.setUser(userName);
-        owm.setCreatedDate(getCurrentDate());
-        owm.setExecutionId(CommonUtils.createRandomSixDigitsId());
+        owm.setUserName(userName);
         return owm;
     }
-
 }
-

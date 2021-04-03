@@ -48,14 +48,15 @@ public class ActionModel extends BaseModel {
     private String description;
 
     @OneToMany(mappedBy = "action",
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = CascadeType.DETACH, // TODO: cand se salveaza ActionModel, sa nu se salveze restul
             orphanRemoval = true
     )
 //    https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
     private Set<CommandActionModel> commandAction = SetUtils.hashSet();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    //    https://www.baeldung.com/hibernate-initialize-proxy-exception -- ce se intampla daca e LAZY
+    @ManyToOne(fetch = FetchType.EAGER)
     private BoardModel board;
 
     public String getCommand() {

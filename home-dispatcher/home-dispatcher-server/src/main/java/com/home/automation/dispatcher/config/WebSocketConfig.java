@@ -28,7 +28,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(final MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/command/", "/queue/");
+        config.enableSimpleBroker("/command/");
         config.setApplicationDestinationPrefixes("/app");
     }
 
@@ -38,7 +38,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setAllowedOriginPatterns("*")
                 .setHandshakeHandler(new CustomHandshakeHandler())
                 .withSockJS();
-        registry.addEndpoint("/board/message");
     }
 
     private class CustomHandshakeHandler extends DefaultHandshakeHandler {

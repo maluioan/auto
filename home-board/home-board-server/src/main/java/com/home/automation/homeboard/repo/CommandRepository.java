@@ -13,7 +13,7 @@ public interface CommandRepository {
 
     int updateCommand(Long commandId, CommandModel commandModel);
 
-    void removeCommand(Long commandId);
+    int removeCommand(Long commandId);
 
     List<CommandActionModel> addActionsToCommand(CommandModel command, List<Long> actionIds);
 

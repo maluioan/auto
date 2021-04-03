@@ -38,8 +38,8 @@ public class QueryBasedCommandRepository extends AbstractBaseRepository implemen
     }
 
     @Override
-    public void removeCommand(final Long commandId) {
-        super.removeBaseModel(commandId, CommandModel.TOGGLE_COMMAND_WITH_ID_ACTIVE_STATUS);
+    public int removeCommand(final Long commandId) {
+        return super.removeBaseModel(commandId, CommandModel.TOGGLE_COMMAND_WITH_ID_ACTIVE_STATUS);
     }
 
     @Override

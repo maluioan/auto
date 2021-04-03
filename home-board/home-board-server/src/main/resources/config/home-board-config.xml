@@ -58,9 +58,10 @@
         <property name="requestMessageHandlers">
             <list>
                 <bean class="com.home.automation.homeboard.websocket.handler.ConnectWsRequestHandler"/>
-                <bean class="com.home.automation.homeboard.websocket.handler.CommandWsRequestHandler">
-                    <property name="mapper" ref="jacksonMapper"/>
+                <bean class="com.home.automation.homeboard.websocket.handler.CommandExecutionWsRequestHandler">
                     <property name="commandDestination" value="${command.execution.destination}"/>
+                    <property name="messageMediator" ref="messageMediator"/>
+                    <property name="subscriberRegistry" ref="subscriberRegistry"/>
                 </bean>
             </list>
         </property>
@@ -68,13 +69,18 @@
 
     <bean id="jacksonMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
 
-    <bean id="stompRequestConverter" class="com.home.automation.homeboard.websocket.message.converter.StompRequestConverter" />
+    <bean id="stompRequestConverter" class="com.home.automation.homeboard.websocket.message.converter.StompRequestConverter">
+        <property name="mapper" ref="jacksonMapper"/>
+    </bean>
 
-    <!-- -->
-    <bean id="messageMediator" class="com.home.automation.homeboard.websocket.mediator.BoardMessageMediator">
+
+
+    <bean id="mediatorFactory" class="com.home.automation.homeboard.websocket.mediator.BoardMessageMediatorFactory">
         <property name="subscriberRegistry" ref="subscriberRegistry"/>
         <property name="messageExecutor" ref="boardMessageExecutor"/>
     </bean>
+
+    <bean id="messageMediator" factory-bean="mediatorFactory" factory-method="createMediator" />
 
     <bean id="boardMessageExecutor" class="com.home.automation.homeboard.websocket.command.BoardMessageExecutor"/>
     <bean id="subscriberRegistry" class="com.home.automation.homeboard.websocket.mediator.BoardSubscriberRegistry"/>
