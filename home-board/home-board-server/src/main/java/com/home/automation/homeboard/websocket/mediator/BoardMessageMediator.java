@@ -5,6 +5,8 @@ import com.home.automation.homeboard.websocket.command.BaseBoardCommand;
 import com.home.automation.homeboard.websocket.command.MessageExecutor;
 import com.home.automation.homeboard.websocket.message.request.PioRequest;
 import com.home.automation.homeboard.websocket.message.request.StompRequest;
+import com.home.automation.homeboard.websocket.message.request.WSRequest;
+import com.home.automation.homeboard.ws.WSMessagePayload;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,25 +31,25 @@ final class BoardMessageMediator implements MessageMediator {
         final List<Subscriber> dispatchers = subscriberRegistry.getDispatchersSubscribers();
         if (CollectionUtils.isNotEmpty(dispatchers))
         {
-            final BaseBoardCommand baseBoardCommand = new BaseBoardCommand(dispatchers, dispMessage);
-            messageExecutor.execute(baseBoardCommand);
+            this.createAndExecuteCommand(dispMessage, dispatchers);
         }
     }
 
     @Override
     public void handleBoardMessages(final PioRequest pioRequest) {
-        final Optional<Subscriber> dispatchers = subscriberRegistry.getMicroControllerByID(pioRequest.getBoardId());
-        if (dispatchers.isPresent()) {
-            final BaseBoardCommand baseBoardCommand = new BaseBoardCommand(Arrays.asList(dispatchers.get()), pioRequest);
-            messageExecutor.execute(baseBoardCommand);
+        final Optional<Subscriber> board = subscriberRegistry.getMicroControllerByID(pioRequest.getBoardId());
+        board.ifPresent(subs -> this.createAndExecuteCommand(pioRequest, Arrays.asList(subs)));
+    }
 
-        } else {
+    @Override
+    public <T extends WSMessagePayload> void sendMessageBackToInitiatingSubscriber(final WSRequest<T> request) {
+        final Optional<Subscriber> subscriber = Optional.ofNullable(request.getInitiatingSubscriber());
+        subscriber.ifPresent(subs -> createAndExecuteCommand(request, Arrays.asList(subs)));
+    }
 
-
-            // TODO: if board isn't  subscribed, notify initiating dispatcher
-//            pioRequest.getInitiatingSubscriber()
-            logger.warn("Cannot find subscribed board with id " + pioRequest.getBoardId() );
-        }
+    private <T extends WSMessagePayload> void createAndExecuteCommand(WSRequest request, List<Subscriber> subs) {
+        final BaseBoardCommand baseBoardCommand = new BaseBoardCommand(subs, request);
+        messageExecutor.execute(baseBoardCommand);
     }
 
     void setSubscriberRegistry(SubscriberRegistry subscriberRegistry) {

@@ -61,12 +61,15 @@ public class CommandReceiverWsEndpoint extends AbstractWsEndpoint<StompRequest>
         }
     }
 
+    // TODO: cand se trimite un msg de eroare, se deconecteaza -- DC???
     private StompRequest createErrorRequest(final StompRequest stompRequest) {
         final String errorMsg = String.format("Error performing request with id %s", stompRequest.getMessageId().get());
 
         // TODO: maybe create a builder for stomp requests
         final StompRequest request = new StompRequest();
-        request.setPayload(new SimpleWSMessagePayload(errorMsg));
+        SimpleWSMessagePayload simpleWSMessagePayload = new SimpleWSMessagePayload();
+        simpleWSMessagePayload.setPayload(errorMsg);
+        request.setPayload(simpleWSMessagePayload);
         request.setContentType("application/json"); // stompRequest.getContentType()
         request.setMessageId(stompRequest.getMessageId().orElse(""));
         request.setMessageType(MessageType.MESSAGE);

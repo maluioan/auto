@@ -41,6 +41,11 @@ public class QueryBasedActionRepository extends AbstractBaseRepository implement
     }
 
     @Override
+    public Optional<ActionModel> findActionByExecutorId(final String executorId) {
+        return super.findBaseModelById(executorId, ActionModel.FIND_ACTIVE_ACTION_WITH_EXECUTOR_ID);
+    }
+
+    @Override
     public int updateAction(Long actionId, ActionModel actionModel) {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("name", actionModel.getName());

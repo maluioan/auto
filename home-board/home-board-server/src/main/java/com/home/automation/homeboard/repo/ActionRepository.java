@@ -12,5 +12,7 @@ public interface ActionRepository {
 
     Optional<ActionModel> findActionById(Long actionId);
 
+    Optional<ActionModel> findActionByExecutorId(String executorId);
+
     int updateAction(Long actionId, ActionModel actionModel);
 }

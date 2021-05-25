@@ -21,7 +21,7 @@
         </property>
     </bean>
 
-    <bean id="dispatcherClienRestTemplate" class="org.springframework.web.client.RestTemplate" />
+    <bean id="simpleClienRestTemplate" class="org.springframework.web.client.RestTemplate" />
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/view/"/>
@@ -35,7 +35,8 @@
     </sec:authentication-manager>
     <!-- TODO: add csrf check-->
 
-    <sec:http use-expressions="true">
+    <import resource="./storefront-api-config.xml"/>
+    <sec:http pattern="/**" use-expressions="true">
         <sec:intercept-url pattern="/login/**" access="isAnonymous()" />
         <sec:intercept-url pattern="/register/**" access="isAnonymous()" />
         <sec:intercept-url pattern="/**" access="isAuthenticated()"/>
@@ -47,7 +48,7 @@
                         password-parameter="par"
                         username-parameter="util"
                         authentication-failure-handler-ref="serviceCallFailureHandler"
-                        authentication-success-handler-ref="successCallFailureHandler"
+                        authentication-success-handler-ref="serviceCallSuccessHandler"
         />
         <sec:logout logout-success-url="/login" />
     </sec:http>
@@ -55,7 +56,7 @@
     <!--TODO: add a 'random' for salt -->
     <bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 
-
+    <!--Services & clients-->
     <bean id="userClient" class="com.home.automation.users.client.impl.DefaultUserClient">
         <constructor-arg ref="userClientRestTemplate"/>
         <property name="host" value="localhost"/>
@@ -63,29 +64,40 @@
     </bean>
 
     <bean id="dispatcherClient" class="com.home.automation.dispatcher.client.impl.DefaultDispatcherClient">
-        <constructor-arg ref="dispatcherClienRestTemplate"/>
+        <constructor-arg ref="simpleClienRestTemplate"/>
         <property name="host" value="localhost"/>
         <property name="port" value="8004"/>
     </bean>
 
+    <bean id="boardClient" class="com.home.automation.homeboard.client.impl.DefaultBoardClient">
+        <constructor-arg ref="userClientRestTemplate"/>
+        <property name="host" value="localhost"/>
+        <property name="port" value="8003"/>
+    </bean>
+
     <bean id="storeFrontUserService" class="com.storefront.service.impl.DefaultStoreFrontUserService">
         <property name="userClient" ref="userClient"/>
+        <property name="sessionService" ref="sessionService"/>
     </bean>
 
     <bean id="customService" class="com.storefront.login.service.HomeUserDetailsService">
         <property name="userService" ref="storeFrontUserService"/>
     </bean>
 
+    <bean id="sessionService" class="com.storefront.service.impl.DefaultSessionService"/>
+
+    <!--login handlers-->
     <bean id="serviceCallFailureHandler" class="com.storefront.login.handler.HomeUrlAuthetificationFailureHandler">
         <property name="allowSessionCreation" value="false"/> <!-- chiar avem nevoie de asta? -->
         <property name="defaultFailureUrl" value="/login" />
     </bean>
 
-    <bean id="successCallFailureHandler" class="com.storefront.login.handler.HomeUrlAuthenticationSuccessHandler">
+    <bean id="serviceCallSuccessHandler" class="com.storefront.login.handler.HomeUrlAuthenticationSuccessHandler">
         <property name="alwaysUseDefaultTargetUrl" value="true"/>
         <property name="defaultTargetUrl" value="/" />
     </bean>
 
+    <!--locale resolver-->
     <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
         <property name="defaultLocale" value="ro" />
     </bean>

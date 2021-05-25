@@ -1,6 +1,6 @@
 package com.home.automation.dispatcher.wsclient;
 
-import com.home.automation.dispatcher.wsclient.frame.observers.FrameObserver;
+import com.home.automation.dispatcher.wsclient.frame.handlers.BoardFrameHandler;
 import com.home.automation.dispatcher.wsclient.messages.BoardStompMessage;
 import com.home.automation.homeboard.ws.WSMessagePayload;
 import org.apache.commons.collections4.MapUtils;
@@ -24,7 +24,7 @@ public class DefaultWsBoardClient implements WsBoardClient {
     private final WebSocketStompClient wsStompClient;
     private final StompSessionHandler sessionHandler;
 
-    private FrameObserver frameObserver;
+    private BoardFrameHandler boardFrameHandler;
     private boolean connecting;
     private String url;
     private StompSession stompSession;
@@ -94,8 +94,8 @@ public class DefaultWsBoardClient implements WsBoardClient {
     }
 
     @Override
-    public void addFrameObserver(FrameObserver frameObserver) {
-        this.frameObserver = frameObserver;
+    public void setBoardFrameHandler(BoardFrameHandler boardFrameHandler) {
+        this.boardFrameHandler = boardFrameHandler;
     }
 
     @Override
@@ -154,7 +154,7 @@ public class DefaultWsBoardClient implements WsBoardClient {
             final BoardStompMessage bsm = new BoardStompMessage();
             bsm.addHeaders(stompHeaders);
             bsm.setPayload((WSMessagePayload) framePayload);
-            DefaultWsBoardClient.this.frameObserver.handleFrame(bsm);
+            DefaultWsBoardClient.this.boardFrameHandler.handleFrame(bsm);
         }
 
         @Override

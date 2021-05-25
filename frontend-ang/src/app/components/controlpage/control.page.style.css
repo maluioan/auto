@@ -1,0 +1,30 @@
+
+.control-container {
+  margin: 5% 5% 50px;
+  background-color: #afdfe6;
+  display: inline-flex;
+  width: 80%;
+}
+
+.room-control-block {
+  width: 70%;
+  float: left;
+}
+
+.feedback-box {
+  background-color: darkseagreen;
+  height: 60%;
+  margin-right: 15px;
+  overflow: auto;
+  max-height: 450px;
+}
+
+.messages-block {
+  width: 50%;
+  float: right;
+}
+
+.chat-box {
+  background-color: #8cbcb3;
+  /*height: 40%;*/
+}

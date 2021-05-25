@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.home.automation.homeboard.exception.BoardServiceException;
 import com.home.automation.homeboard.websocket.message.MessageType;
 import com.home.automation.homeboard.websocket.message.request.StompRequest;
-import com.home.automation.homeboard.ws.CommandMessagePayload;
+import com.home.automation.homeboard.ws.ActionMessagePayload;
 import com.home.automation.homeboard.ws.SimpleWSMessagePayload;
 import com.home.automation.homeboard.ws.WSMessagePayload;
 import org.apache.commons.collections4.MapUtils;
@@ -86,7 +86,7 @@ public class StompRequestConverter implements WSRequestConverter<StompRequest>
 
 	private TypeConverterHelper<String, WSMessagePayload> findPayloadConverter(final StompRequest stompRequest) {
 		final Optional<String> contentType = stompRequest.getContentType();
-		// TODO: daca content type-ul nu are un convertor
+
 		final MediaType mediaType = contentType.map(MediaType::valueOf).orElse(MediaType.valueOf(NONE));
 		return payloadConverters.containsKey(mediaType)
 				? payloadConverters.get(mediaType)
@@ -122,10 +122,10 @@ public class StompRequestConverter implements WSRequestConverter<StompRequest>
 		}
 
 		@Override
-		public CommandMessagePayload decodeMessage(String payload) {
+		public ActionMessagePayload decodeMessage(String payload) {
 			try
 			{
-				return mapper.readValue(String.valueOf(payload), CommandMessagePayload.class);
+				return mapper.readValue(String.valueOf(payload), ActionMessagePayload.class);
 			}
 			catch (JsonProcessingException e)
 			{
@@ -143,8 +143,10 @@ public class StompRequestConverter implements WSRequestConverter<StompRequest>
 		}
 
 		@Override
-		public WSMessagePayload decodeMessage(String payload) {
-			return new SimpleWSMessagePayload(payload);
+		public WSMessagePayload decodeMessage(final String payload) {
+			final SimpleWSMessagePayload simpleWSMessagePayload = new SimpleWSMessagePayload();
+			simpleWSMessagePayload.setPayload(payload);
+			return simpleWSMessagePayload;
 		}
 	}
 }

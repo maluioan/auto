@@ -3,34 +3,33 @@ package com.home.automation.dispatcher.service.impl;
 import com.home.automation.dispatcher.service.DispatcherService;
 import com.home.automation.dispatcher.wsclient.WsBoardClient;
 import com.home.automation.dispatcher.wsclient.messages.BoardStompMessage;
-import com.home.automation.homeboard.ws.CommandMessagePayload;
-import com.home.automation.homeboard.ws.WSMessagePayload;
+import com.home.automation.homeboard.ws.ActionMessagePayload;
 import com.home.automation.util.CommonUtils;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+@Deprecated
 @Component
 public class WsBoardDispatcherManager implements DispatcherService {
 
-    @Resource(name = "wsObservedBoardClient")
+    @Resource(name = "wsBoardClient")
     private WsBoardClient wsBoardClient;
 
-    @Override
-    public void sendMessageWithFeedback(String commandId, String userName) {
+    @Override // TODO: add feedback intr-o forma sau alta
+    public void sendMessageWithFeedback(String actionId, String userName, Object payload) {
         final BoardStompMessage stompMessage = new BoardStompMessage();
         stompMessage.setMessageId(CommonUtils.createRandomSixDigitsId());
-        stompMessage.setPayload(createCommandMessage(commandId, userName));
+        stompMessage.setPayload(createCommandMessage(actionId, userName, payload));
 
         wsBoardClient.sendMessage(stompMessage);
     }
 
-    private CommandMessagePayload createCommandMessage(final String commandId, final String userName) {
-        final CommandMessagePayload owm = new CommandMessagePayload();
-        owm.setCommandId(commandId);
-        owm.setUserName(userName);
+    private ActionMessagePayload createCommandMessage(final String actionId, final String userName, final Object payload) {
+        final ActionMessagePayload owm = new ActionMessagePayload();
+        owm.setMessageId(actionId);
+        owm.setExecutorId(userName);
+        owm.setPayload(payload);
         return owm;
     }
 }

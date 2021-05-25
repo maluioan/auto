@@ -2,14 +2,17 @@ package com.home.automation.homeboard.facade.impl;
 
 import com.home.automation.homeboard.converters.CommandConverter;
 import com.home.automation.homeboard.data.CommandData;
+import com.home.automation.homeboard.data.CommandDataList;
 import com.home.automation.homeboard.domain.CommandModel;
 import com.home.automation.homeboard.facade.CommandFacade;
 import com.home.automation.homeboard.service.model.CommandService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class DefaultCommandFacade implements CommandFacade {
@@ -52,5 +55,17 @@ public class DefaultCommandFacade implements CommandFacade {
     @Override
     public CommandData disableActionsForCoomand(Long commandId, List<Long> actionIds, Boolean status) {
         return commandService.disableActionsForCommand(commandId, actionIds, status).map(commandConverter::convertToData).get();
+    }
+
+    @Override
+    public CommandDataList findCommandsCount(int commandCount) {
+        final List<CommandModel> commandModels = commandService.retrieveCommandsCount(commandCount);
+        final List<CommandData> commands = CollectionUtils.emptyIfNull(commandModels).stream().map(commandConverter::convertToData).collect(Collectors.toList());
+
+        final CommandDataList commandDataList = new CommandDataList();
+        commandDataList.setCommandDataList(commands);
+        commandDataList.setRequestedCount(commandCount);
+
+        return commandDataList;
     }
 }

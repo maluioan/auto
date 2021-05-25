@@ -6,13 +6,13 @@ import com.home.automation.users.client.exception.HomeUserClientException;
 import com.home.automation.users.dto.UserData;
 import com.home.automation.users.response.FieldErrorMessage;
 import com.home.automation.users.response.UserCreationResponse;
+import com.storefront.data.UserAuthetificationDetails;
 import com.storefront.register.CreateUserDataResultData;
+import com.storefront.service.SessionService;
 import com.storefront.service.StoreFrontUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.Assert;
 
 import java.util.Arrays;
@@ -20,13 +20,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import static com.storefront.util.StoreFrontConstants.ANONYMOUS;
-
+// TODO: cum se comporta asta in mutithreaded context, incearca mai multe sesiuni
 public class DefaultStoreFrontUserService implements StoreFrontUserService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultStoreFrontUserService.class);
 
     private UserClient userClient;
+
+    private SessionService sessionService;
 
     @Override
     public UserData getUserByUserName(final String userName) {
@@ -68,15 +69,13 @@ public class DefaultStoreFrontUserService implements StoreFrontUserService {
 
     @Override
     public UserData getSessionUser() {
-        final String sessionUserName = findAuthetificatedUserName();
+        final String sessionUserName = getAuthentificatedUserDetails().getUsername();
         return this.getUserByUserName(sessionUserName);
     }
 
-    private String findAuthetificatedUserName() {
-        // TODO: refactor
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final org.springframework.security.core.userdetails.User authUser = (org.springframework.security.core.userdetails.User)authentication.getPrincipal();
-        return authUser.getUsername();
+    @Override
+    public UserAuthetificationDetails getAuthentificatedUserDetails() {
+        return sessionService.getAuthentificatedUser();
     }
 
     private Collection<String> parseMessages(final UserCreationResponse creationResponse) {
@@ -86,15 +85,11 @@ public class DefaultStoreFrontUserService implements StoreFrontUserService {
                 : Collections.emptyList();
     }
 
-    private UserData getAnonymousUser() {
-        final UserData user = new UserData();
-        user.setActive(true);
-        user.setUserName(ANONYMOUS);
-//        user.setRoleData(); // TODO: add anonymous role
-        return user;
-    }
-
     public void setUserClient(UserClient userClient) {
         this.userClient = userClient;
+    }
+
+    public void setSessionService(SessionService sessionService) {
+        this.sessionService = sessionService;
     }
 }

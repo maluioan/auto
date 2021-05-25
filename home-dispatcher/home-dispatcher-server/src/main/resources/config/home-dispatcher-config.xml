@@ -9,13 +9,21 @@
         <!--<property name="timeout" value="${board.server.ws.timeout}"/>-->
         <property name="boardCommunicationPath" value="${board.server.ws.communication}"/>
         <property name="clientId" value="dispatcher"/>
-    </bean>
-
-    <bean id="wsObservedBoardClient" class="com.home.automation.dispatcher.wsclient.DelegatingObservableWsBoardClient">
-        <constructor-arg ref="wsBoardClient"/>
+        <property name="boardFrameHandler" ref="compositeFrameObserver" />
     </bean>
 
     <bean class="com.home.automation.dispatcher.schedulers.WsClientConnectionScheduler">
-        <constructor-arg ref="wsObservedBoardClient"/>
+        <constructor-arg ref="wsBoardClient"/>
+    </bean>
+    <bean id="compositeFrameObserver" class="com.home.automation.dispatcher.wsclient.frame.handlers.CompositeBoardFrameHandler">
+        <property name="boardFrameHandlers">
+            <list>
+                <bean class="com.home.automation.dispatcher.wsclient.frame.handlers.NonSubscribedBoardBoardFrameHandler"/>
+                <bean class="com.home.automation.dispatcher.wsclient.frame.handlers.ActionSubscribersFrameBoardHandler">
+                    <constructor-arg value="/dispatcher-broker/topic/feedback/action"/>
+                </bean>
+                <bean class="com.home.automation.dispatcher.wsclient.frame.handlers.MailPictureBoardFrameHandler"/>
+            </list>
+        </property>
     </bean>
 </beans>

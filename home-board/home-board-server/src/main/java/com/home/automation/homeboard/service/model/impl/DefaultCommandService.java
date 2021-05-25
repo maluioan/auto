@@ -123,6 +123,7 @@ public class DefaultCommandService implements CommandService {
     }
 
     @Override
+    // TODO: acum executia e per actiuni, nu per comenzi.. adauga si per comenzi adica mai multe actiuni in acelasi tim
     public MultiValueMap<BoardModel, ActionModel> splitActionsPerBoardFromCommand(final Long commandId) {
         final Optional<CommandModel> command = this.findCommandById(commandId);
 
@@ -132,6 +133,11 @@ public class DefaultCommandService implements CommandService {
                 .map(CommandActionModel::getAction)
                 .forEach(action -> boardToActionMap.add(action.getBoard(), action));
         return boardToActionMap;
+    }
+
+    @Override
+    public List<CommandModel> retrieveCommandsCount(int commandCount) {
+        return commandRepository.retrieveCommandsCount(commandCount);
     }
 
     private CommandModel checkAndGetCommand(final Long commandId) {

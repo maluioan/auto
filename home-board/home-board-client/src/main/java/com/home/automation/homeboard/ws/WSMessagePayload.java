@@ -1,8 +1,11 @@
 package com.home.automation.homeboard.ws;
 
-public interface WSMessagePayload {
-    public static String PAYLOAD_HEADER = "payload-type";
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+public interface WSMessagePayload {
+    String PAYLOAD_HEADER = "payload-type";
+
+    @JsonIgnore
     default Class getType() {
         return this.getClass();
     }

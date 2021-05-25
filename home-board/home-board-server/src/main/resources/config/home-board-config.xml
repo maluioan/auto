@@ -47,10 +47,23 @@
         <property name="messageMediator" ref="messageMediator"/>
     </bean>
 
-    <bean id="boardEndpoint" class="com.home.automation.homeboard.websocket.endpointclient.MicroControllerWsEndpoint" parent="baseEndpoint">
-        <property name="path" value="/boards/server" />
-<!--        <property name="coderEncoderConverter" ref="boardMessageConverter"/>-->
+    <bean id="abstractWsRequestHandler" class="com.home.automation.homeboard.websocket.handler.AbstractWsRequestHandler" abstract="true">
+        <property name="messageMediator" ref="messageMediator"/>
     </bean>
+
+    <bean id="boardEndpoint" class="com.home.automation.homeboard.websocket.endpointclient.MicroControllerWsEndpoint" parent="baseEndpoint">
+        <property name="path" value="/board/server" />
+        <property name="coderEncoderConverter" ref="pioRequestMessageConverter"/>
+        <property name="requestMessageHandlers">
+            <list>
+                <ref bean="connectPioRequestHandler"/>
+                <ref bean="simplePioRequestHandler"/>
+            </list>
+        </property>
+    </bean>
+    <bean id="simplePioRequestHandler" class="com.home.automation.homeboard.websocket.handler.SimplePioRequestHandler" parent="abstractWsRequestHandler"/>
+    <bean id="connectPioRequestHandler" class="com.home.automation.homeboard.websocket.handler.ConnectPioRequestHandler" parent="abstractWsRequestHandler"/>
+
 
     <bean id="subscriberEndpoint" class="com.home.automation.homeboard.websocket.endpointclient.CommandReceiverWsEndpoint" parent="baseEndpoint">
         <property name="path" value="/subscriber/server" />
@@ -58,14 +71,15 @@
         <property name="requestMessageHandlers">
             <list>
                 <bean class="com.home.automation.homeboard.websocket.handler.ConnectWsRequestHandler"/>
-                <bean class="com.home.automation.homeboard.websocket.handler.CommandExecutionWsRequestHandler">
-                    <property name="commandDestination" value="${command.execution.destination}"/>
-                    <property name="messageMediator" ref="messageMediator"/>
-                    <property name="subscriberRegistry" ref="subscriberRegistry"/>
-                </bean>
+                <ref bean="actionExecutionWsRequestHandler"/>
             </list>
         </property>
     </bean>
+    <bean id="actionExecutionWsRequestHandler" class="com.home.automation.homeboard.websocket.handler.ActionExecutionWsRequestHandler" parent="abstractWsRequestHandler">
+        <property name="commandDestination" value="${command.execution.destination}"/>
+        <property name="subscriberRegistry" ref="subscriberRegistry"/>
+    </bean>
+
 
     <bean id="jacksonMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
 
@@ -73,6 +87,7 @@
         <property name="mapper" ref="jacksonMapper"/>
     </bean>
 
+    <bean id="pioRequestMessageConverter" class="com.home.automation.homeboard.websocket.message.converter.PioRequestMessageConverter"/>
 
 
     <bean id="mediatorFactory" class="com.home.automation.homeboard.websocket.mediator.BoardMessageMediatorFactory">

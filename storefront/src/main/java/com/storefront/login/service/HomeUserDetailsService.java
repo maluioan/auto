@@ -2,6 +2,7 @@ package com.storefront.login.service;
 
 import com.home.automation.exception.HomeServiceLoginException;
 import com.home.automation.users.dto.UserData;
+import com.storefront.data.UserAuthetificationDetails;
 import com.storefront.service.StoreFrontUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ public class HomeUserDetailsService implements UserDetailsService {
     }
 
     private UserDetails createUserDetailsForUser(final UserData homeUser) {
-        return new org.springframework.security.core.userdetails.User(homeUser.getUserName(), homeUser.getPassword(), homeUser.getActive(), true, true, true, findRoles(homeUser));
+        return new UserAuthetificationDetails(homeUser.getUserName(), homeUser.getPassword(), homeUser.getActive(), true, true, true, findRoles(homeUser));
     }
 
     private Collection<? extends GrantedAuthority> findRoles(UserData body) {

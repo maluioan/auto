@@ -4,9 +4,9 @@ import java.util.List;
 
 public class NonSubscribedBoardMessagePayload implements WSMessagePayload {
 
+    private Object payload;
     private String boardName;
-
-    private List<String> actions;
+    private List<String> actionIds;
 
     public String getBoardName() {
         return boardName;
@@ -16,11 +16,19 @@ public class NonSubscribedBoardMessagePayload implements WSMessagePayload {
         this.boardName = boardName;
     }
 
-    public List<String> getActions() {
-        return actions;
+    public List<String> getActionIds() {
+        return actionIds;
     }
 
-    public void setActions(List<String> actions) {
-        this.actions = actions;
+    public void setActionIds(List<String> actions) {
+        this.actionIds = actions;
+    }
+
+    public void setPayload(Object payload) {
+        this.payload = payload;
+    }
+
+    public Object getPayload() {
+        return payload;
     }
 }

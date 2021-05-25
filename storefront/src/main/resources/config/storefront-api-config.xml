@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/util
+   	   http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <sec:http pattern="/api/**" use-expressions="true">
+        <sec:intercept-url pattern="/api/stats/**" access="permitAll()" />
+        <sec:intercept-url pattern="/api/login/**" access="isAnonymous()" />
+        <sec:intercept-url pattern="/register/**" access="isAnonymous()" />
+        <sec:intercept-url pattern="/**" access="isAuthenticated()"/>
+
+        <sec:csrf disabled="true"/>
+        <sec:cors configuration-source-ref="corsConfigurationSource"/>
+
+        <!-- la ce foloseste 'login-page' de mai jos ??? -->
+        <sec:form-login login-page='/login'
+                        default-target-url="/home"
+                        login-processing-url="/api/login_check"
+                        password-parameter="par"
+                        username-parameter="util"
+                        authentication-success-handler-ref="apiServiceCallSuccessHandler"
+                        authentication-failure-handler-ref="apiServiceCallFailureHandler"
+        />
+        <!--TODO: add logout-->
+        <!--<sec:logout logout-success-url="/login" />-->
+    </sec:http>
+
+    <!--CORS -->
+    <bean id="corsConfigurationSource" class="com.storefront.config.CustomCorsConfiguration">
+        <property name="corsConfiguration" ref="corsConfiguration" />
+    </bean>
+    <bean id="corsConfiguration" class="org.springframework.web.cors.CorsConfiguration">
+        <property name="allowedHeaders">
+            <util:list>
+                <value>*</value>
+            </util:list>
+        </property>
+        <property name="allowedOrigins">
+            <util:list>
+                <value>http://localhost:4200</value>
+            </util:list>
+        </property>
+        <property name="allowedMethods">
+            <util:list>
+                <value>POST</value>
+                <value>GET</value>
+            </util:list>
+        </property>
+    </bean>
+
+    <!--login handlers -->
+    <bean id="apiServiceCallSuccessHandler" class="com.storefront.login.handler.ApiAuthentificationSuccessHandler" parent="serviceCallSuccessHandler" />
+
+    <bean id="apiServiceCallFailureHandler" class="com.storefront.login.handler.HomeUrlAuthetificationFailureHandler">
+        <property name="allowSessionCreation" value="false"/> <!-- chiar avem nevoie de asta? -->
+        <property name="defaultFailureUrl" value="/api/login" />
+    </bean>
+
+</beans>

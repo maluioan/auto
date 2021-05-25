@@ -63,6 +63,7 @@ public class CommandConverter extends AbstractBaseConverter<CommandModel, Comman
     private ActionData createActionData(final CommandActionModel cam) {
         final ActionData actionData = actionConverter.convertToData(cam.getAction());
         actionData.setActive(cam.getActive());
+        actionData.setParentCommandName(cam.getCommand().getName());
         return actionData;
     }
 }

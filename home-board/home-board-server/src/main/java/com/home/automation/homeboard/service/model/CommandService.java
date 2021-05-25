@@ -24,4 +24,5 @@ public interface CommandService {
 
     MultiValueMap<BoardModel, ActionModel> splitActionsPerBoardFromCommand(Long commandId);
 
+    List<CommandModel> retrieveCommandsCount(int commandCount);
 }

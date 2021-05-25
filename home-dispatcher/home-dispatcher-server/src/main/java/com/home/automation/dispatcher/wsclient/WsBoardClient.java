@@ -1,6 +1,6 @@
 package com.home.automation.dispatcher.wsclient;
 
-import com.home.automation.dispatcher.wsclient.frame.observers.FrameObserver;
+import com.home.automation.dispatcher.wsclient.frame.handlers.BoardFrameHandler;
 import com.home.automation.dispatcher.wsclient.messages.BoardStompMessage;
 
 public interface WsBoardClient {
@@ -13,5 +13,5 @@ public interface WsBoardClient {
 
     boolean sendMessage(BoardStompMessage msg);
 
-    void addFrameObserver(FrameObserver frameObserver);
+    void setBoardFrameHandler(BoardFrameHandler boardFrameHandler);
 }

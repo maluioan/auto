@@ -1,0 +1,29 @@
+
+/*Used for main app component*/
+.app-container {
+  background-color: DodgerBlue;
+  margin: 0 10%;
+  padding: 15px;
+}
+
+
+/*Used for loading/erro component*/
+div.info {
+  width: 15%;
+  margin: 5% auto;
+  background-color: #afdfe6;
+  border-radius: 5%;
+  text-align: center;
+  font-weight: bold;
+  padding: 15px;
+}
+
+div.error{
+  width: 20%;
+  margin: 5% auto;
+  background-color: #e97c1e;
+  border-radius: 5%;
+  text-align: center;
+  font-weight: bold;
+  padding: 15px;
+}

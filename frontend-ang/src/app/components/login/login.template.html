@@ -1,0 +1,25 @@
+
+<div class="login-container">
+
+  <form (ngSubmit)="doLogin()" class="login-form">
+    <div class="login-result-message" *ngIf="invalidLogin">Invalid login: {{invalidLoginMessage}}</div>
+
+     <div class="login-field">
+      <span>Utilizator </span>
+      <input type="text" [(ngModel)]="username" name="username" id="username" placeholder="Utilizator" required/>
+     </div>
+
+     <div class="login-field">
+        <span>Parola </span>
+        <input type="password" [(ngModel)]="password" name="password" id="password" placeholder="Parola" required/>
+     </div>
+
+     <div>
+      <button class="button">Click pentru logare</button>
+     </div>
+
+     <div class="login-state-message" *ngIf="hasCurrentState()">{{currentStateMessage}} </div>
+  </form>
+
+</div>
+

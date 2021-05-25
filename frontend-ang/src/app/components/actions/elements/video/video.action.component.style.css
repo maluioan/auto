@@ -1,0 +1,10 @@
+
+.video {
+  background-color: azure;
+  margin-left: 25%;
+  padding: 15px 4%;
+  width: 10%;
+  border-radius: 15%;
+  border-style: solid;
+  float: left;
+}

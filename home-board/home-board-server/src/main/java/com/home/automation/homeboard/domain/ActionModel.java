@@ -15,6 +15,10 @@ import java.util.Set;
                 query = "select object (act) from actions as act where act.id = :id and act.active = :active"
         ),
         @NamedQuery(
+                name = ActionModel.FIND_ACTIVE_ACTION_WITH_EXECUTOR_ID,
+                query = "select object (act) from actions as act where act.executorId = :id and act.active = :active"
+        ),
+        @NamedQuery(
                 name = ActionModel.BATCH_FETCH_BY_ID,
                 query = "select object (act) from actions as act where act.id in (:actionIds)"
         ),
@@ -35,6 +39,7 @@ public class ActionModel extends BaseModel {
     public static final String BATCH_FETCH_BY_ID = "ActionModel.fetchByIds";
     public static final String TOGGLE_ACTION_WITH_ID_ACTIVE_STATUS = "ActionModel.toggleActiveStatus";
     public static final String FIND_ACTIVE_ACTION_WITH_ID = "ActionModel.findById";
+    public static final String FIND_ACTIVE_ACTION_WITH_EXECUTOR_ID = "ActionModel.findByExecutorId";
     public static final String UPDATE_ACTION_WITH_ID_ACTIVE_STATUS = "ActionModel.updateAction";
 
     @NaturalId
@@ -46,6 +51,17 @@ public class ActionModel extends BaseModel {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "room")
+    private String room;
+
+    @Column(name = "executorId", unique = true, nullable = false)
+    private String executorId;
+
+    // more details (and postgres details): https://vladmihalcea.com/the-best-way-to-map-an-enum-type-with-jpa-and-hibernate/
+    @Enumerated(EnumType.STRING)  // TODO: change from string to number
+    @Column(name = "actionType")
+    private ActionType actionType;
 
     @OneToMany(mappedBy = "action",
             fetch = FetchType.EAGER,
@@ -97,6 +113,30 @@ public class ActionModel extends BaseModel {
 
     public void setBoard(BoardModel board) {
         this.board = board;
+    }
+
+    public String getRoom() {
+        return room;
+    }
+
+    public void setRoom(String room) {
+        this.room = room;
+    }
+
+    public String getExecutorId() {
+        return executorId;
+    }
+
+    public void setExecutorId(String executorId) {
+        this.executorId = executorId;
+    }
+
+    public ActionType getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(ActionType actionType) {
+        this.actionType = actionType;
     }
 }
 

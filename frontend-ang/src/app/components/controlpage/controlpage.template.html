@@ -1,0 +1,22 @@
+<div class="control-container"> <!-- TODO: peste tot sunt numai div-uri, ce as putea sa folosesc altceba??? -->
+
+  <div class="room-control-block">
+    <h2>Command component</h2>
+    <div *ngFor="let roomAction of roomActions" >
+      <room-component [userName]="userName" [wsClient]="wsClient" [roomActionData]="roomAction"></room-component>
+    </div>
+  </div>
+
+  <div class="messages-block">
+    <h2>Feedback component</h2>
+    <div *ngIf="connected" class="feedback-box">
+      <feedback-component [wsClient]="wsClient" [actions]="actions" [userName]="userName"></feedback-component>
+    </div>
+
+
+    <h2>Chat component</h2>
+    <div *ngIf="connected" class="chat-box">
+      <chat-component [userName]="userName" [wsClient]="wsClient"></chat-component>
+    </div>
+  </div>
+</div>

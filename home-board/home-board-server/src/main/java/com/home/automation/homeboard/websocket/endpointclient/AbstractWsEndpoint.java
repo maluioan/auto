@@ -96,13 +96,13 @@ public abstract class AbstractWsEndpoint<REQUEST extends WSRequest> extends Endp
      *
      */
     @Override
-    public void sendMessage(Object messageEndpoint, boolean asynch) {
+    public void sendMessage(Object msg, boolean asynch) {
         if (asynch) {
-            wsSession.getAsyncRemote().sendObject(messageEndpoint);
+            wsSession.getAsyncRemote().sendObject(msg);
         } else {
             try {
                 // TODO: treat exceptions
-                wsSession.getBasicRemote().sendObject(messageEndpoint);
+                wsSession.getBasicRemote().sendObject(msg);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (EncodeException e) {

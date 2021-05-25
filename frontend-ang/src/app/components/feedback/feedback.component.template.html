@@ -1,0 +1,15 @@
+<div class="feedback-container">
+  <h5>Feedbacks:</h5>
+  <!-- TODO: pt cand o sa fie mai mare arrayul de 'feedbackMessages', nu reranda toata lista, ci apenduieste noile elemente doar,  are angular ceva feature pt asta-->
+  <div *ngFor="let feedback of feedbackMessages.slice().reverse()">
+    <div class="received-feedback" [ngClass]="getFeedbackTypeClass(feedback)">
+      <div [ngClass]="userFeedbackStyle(feedback.userName)">
+        {{feedback.userName}}
+      </div>
+      <div class="message-line">
+        <span class="feedback-message">{{feedback.message}}</span>
+        <span class="feedback-creation">{{feedback.creationDate}}</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 package com.home.automation.homeboard.controller;
 
 import com.home.automation.homeboard.data.CommandData;
+import com.home.automation.homeboard.data.CommandDataList;
 import com.home.automation.homeboard.facade.CommandFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -14,6 +15,11 @@ public class CommandController {
 
     @Autowired
     private CommandFacade commandFacade;
+
+    @GetMapping(value = "/commands", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommandDataList retrieveAllCommands(@RequestParam(value = "count", defaultValue = "10") Integer count) {
+        return commandFacade.findCommandsCount(count);
+    }
 
     @GetMapping(value = "/command/{commandDataId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CommandData retrieveCommand(@PathVariable final Long commandDataId) {

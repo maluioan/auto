@@ -35,6 +35,13 @@ public class DefaultActionService implements ActionService {
     }
 
     @Override
+    public Optional<ActionModel> findExecutorById(final String executionId) {
+        Assert.notNull(executionId, "Execution id shouldn't be emtpy");
+
+        return actionRepository.findActionByExecutorId(executionId);
+    }
+
+    @Override
     public Optional<ActionModel> updateAction(final Long actionId, final ActionModel newAction) {
         Assert.notNull(newAction, "Action should not be empty");
         checkAndGetAction(actionId);

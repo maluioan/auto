@@ -7,7 +7,6 @@ import java.util.List;
 public class BoardData extends BaseData {
     private String name;
     private String description;
-    private List<ActionData> actions;
     private String externalBoardId;
 
     public String getName() {
@@ -24,14 +23,6 @@ public class BoardData extends BaseData {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public List<ActionData> getActions() {
-        return actions;
-    }
-
-    public void setActions(List<ActionData> actions) {
-        this.actions = actions;
     }
 
     public String getExternalBoardId() {

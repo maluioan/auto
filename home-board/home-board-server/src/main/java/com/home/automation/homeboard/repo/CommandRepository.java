@@ -20,4 +20,6 @@ public interface CommandRepository {
     Optional<CommandModel> findCommandById(Long commandId);
 
     void changeCommandActionStatus(CommandModel commandId, List<ActionModel> actionIds, boolean activeStatus);
+
+    List<CommandModel> retrieveCommandsCount(int commandCount);
 }

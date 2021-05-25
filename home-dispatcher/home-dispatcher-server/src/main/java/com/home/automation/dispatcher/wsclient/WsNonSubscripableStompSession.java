@@ -35,7 +35,7 @@ class WsNonSubscripableStompSession extends DefaultStompSession {
             Type payloadType = getSessionHandler().getPayloadType(stompNativeHeaders);
             Class<?> resolvedType = ResolvableType.forType(payloadType).resolve();
             if (resolvedType != null) {
-                stompNativeHeaders.setSession(getSessionId());
+//                stompNativeHeaders.setSession(getSessionId()); // TODO: se pune intr-un modifiableList, oare chiar avem nevoie???
                 final Object messageObject = getMessageConverter().fromMessage(message, resolvedType);
                 // TODO: treat null cases for messageObject
                 getSessionHandler().handleFrame(stompNativeHeaders, messageObject);

@@ -1,6 +1,5 @@
 package com.home.automation.homeboard.websocket.message.request;
 
-import com.home.automation.homeboard.websocket.message.MessageType;
 import com.home.automation.homeboard.ws.WSMessagePayload;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -18,7 +17,6 @@ public class StompRequest extends AbstractWSRequest<WSMessagePayload> {
                 throw new IllegalStateException(String.format("Request already contains a message id %s", execId));
             };
 
-    private MessageType messageType;
     private Map<String, Object> messageHeaders;
 
     @Override
@@ -36,16 +34,6 @@ public class StompRequest extends AbstractWSRequest<WSMessagePayload> {
 
     public void setMessageHeaders(Map<String, Object> messageHeaders) {
         this.getMessageHeaders().putAll(messageHeaders);
-    }
-
-    public MessageType getMessageType()
-    {
-        return messageType;
-    }
-
-    public void setMessageType(MessageType messageType)
-    {
-        this.messageType = messageType;
     }
 
     public Optional<String> getRequestType() {

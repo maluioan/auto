@@ -1,9 +1,6 @@
 package com.home.automation.homeboard.websocket.message.request;
 
-import org.apache.commons.collections4.ListUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -12,8 +9,7 @@ public class PioRequest extends AbstractWSRequest<Object>
 {
 	private String boardId;
 	private String messageId;
-
-	private List<String> commands = new ArrayList<>();
+	private String executorId;
 
 	@Override
 	public Optional<String> getMessageId()
@@ -25,14 +21,6 @@ public class PioRequest extends AbstractWSRequest<Object>
 		this.messageId = messageId;
 	}
 
-	public List<String> getCommands() {
-		return ListUtils.unmodifiableList(commands);
-	}
-
-	public void setCommands(List<String> commands) {
-		this.commands = commands;
-	}
-
 	public void setBoardId(String boardId) {
 		this.boardId = boardId;
 	}
@@ -42,11 +30,11 @@ public class PioRequest extends AbstractWSRequest<Object>
 		return boardId;
 	}
 
-	public void addCommand(final String msg) {
-		this.commands.add(msg);
+	public String getExecutorId() {
+		return executorId;
 	}
 
-	public void addCommands(final List<String> msgs) {
-		this.commands.addAll(msgs);
+	public void setExecutorId(String executorId) {
+		this.executorId = executorId;
 	}
 }

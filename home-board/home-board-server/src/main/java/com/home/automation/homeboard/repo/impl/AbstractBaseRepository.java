@@ -36,7 +36,7 @@ public abstract class AbstractBaseRepository {
      * @param <BM>
      * @return
      */
-    public <BM extends BaseModel> Optional<BM> findBaseModelById(final Long baseModelId, final String nameQuery) {
+    protected  <BM extends BaseModel> Optional<BM> findBaseModelById(final Object baseModelId, final String nameQuery) {
         final Query findCommand = entityManager.createNamedQuery(nameQuery);
         findCommand.setParameter("id", baseModelId);
         findCommand.setParameter("active", Boolean.TRUE);

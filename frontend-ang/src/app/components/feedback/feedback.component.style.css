@@ -1,0 +1,36 @@
+
+.received-feedback {
+  padding: 4px;
+  background-color: #73c2c6;
+  border-width: thin;
+  margin: 10px;
+  border-radius: 10px;
+}
+
+.unsubscribed-board {
+  background-color: #c6771f;
+}
+
+div.current-username {
+  color: rgba(80, 13, 83, 0.75);
+  text-align: right;
+  font-weight: bold;
+}
+
+div.different-username {
+  color: darkblue;
+  text-align: left;
+}
+
+div.message-line {
+  padding-left: 15px;
+}
+
+.feedback-message {
+  font-size: 18px;
+}
+
+.feedback-creation {
+  font-size: 12px;
+  float: right;
+}

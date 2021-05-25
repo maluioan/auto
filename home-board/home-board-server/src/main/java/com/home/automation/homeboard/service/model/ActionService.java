@@ -10,6 +10,8 @@ public interface ActionService {
 
     Optional<ActionModel> findActionById(Long actionId);
 
+    Optional<ActionModel> findExecutorById(final String executionId);
+
     Optional<ActionModel> updateAction(Long actionId, ActionModel action);
 
     Optional<ActionModel> deleteAction(final Long actionId);

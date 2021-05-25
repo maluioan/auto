@@ -1,0 +1,16 @@
+
+div.room-container {
+  background-color: #f1f1f1;
+  margin: 15px 5px;
+  border-radius: 50px;
+  padding-bottom: 15px;
+  display: flow-root;
+}
+
+div.room-name {
+  width: 15%;
+  margin-left: 15%;
+  font-weight: bold;
+  text-transform: capitalize;
+  padding: 10px;
+}

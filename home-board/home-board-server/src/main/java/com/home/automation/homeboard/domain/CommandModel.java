@@ -21,6 +21,10 @@ import java.util.Set;
         @NamedQuery(
                 name= CommandModel.UPDATE_COMMAND_WITH_ID_ACTIVE_STATUS,
                 query = "update commands com set com.name = :name, com.description = :description where com.id = :id"
+        ),
+        @NamedQuery(
+                name= CommandModel.FIND_ALL_ACTIVE_COMMANDS,
+                query = "SELECT object (com) from commands com where com.active = :active" // JPQL syntax
         )
 })
 
@@ -29,6 +33,7 @@ import java.util.Set;
 @DynamicUpdate
 public class CommandModel extends BaseModel {
 
+    public static final String FIND_ALL_ACTIVE_COMMANDS = "CommandModel.findAllActiveCommands";
     public static final String FIND_ACTIVE_COMMAND_WITH_ID = "CommandModel.findById";
     public static final String TOGGLE_COMMAND_WITH_ID_ACTIVE_STATUS = "CommandModel.inactivateById";
     public static final String UPDATE_COMMAND_WITH_ID_ACTIVE_STATUS = "CommandModel.updateBaseModel";

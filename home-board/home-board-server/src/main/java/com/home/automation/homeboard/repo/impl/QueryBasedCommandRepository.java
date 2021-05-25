@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +74,14 @@ public class QueryBasedCommandRepository extends AbstractBaseRepository implemen
         parameters.put("active", activeStatus);
 
         super.updateBaseModel(parameters, CommandActionModel.TOGGLE_COMMAND_ACTION_STATUS);
+    }
+
+    @Override
+    public List<CommandModel> retrieveCommandsCount(int commandCount) {
+        final Query namedQuery = entityManager.createNamedQuery(CommandModel.FIND_ALL_ACTIVE_COMMANDS, CommandModel.class)
+                .setParameter("active", Boolean.TRUE);
+        namedQuery.setMaxResults(commandCount);
+        return namedQuery.getResultList(); // TODO: if no records => empty/null, right?
     }
 
     private CommandActionModel createAndPersistCommandAction(CommandModel command, ActionModel action) {
