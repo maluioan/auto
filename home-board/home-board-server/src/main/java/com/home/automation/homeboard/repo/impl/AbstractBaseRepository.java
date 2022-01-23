@@ -43,7 +43,7 @@ public abstract class AbstractBaseRepository {
 
         final List<BM> resultList = findCommand.getResultList();
         if (resultList.size() > 1) {
-            logger.warn(String.format("Multiple entries of type %s found with id %s."), resultList.get(0).getClass().getSimpleName(), baseModelId);
+            logger.warn(String.format("Multiple entries of type %s found with id %s.", resultList.get(0).getClass().getSimpleName(), baseModelId));
         }
 
         return (resultList.size() != 0)

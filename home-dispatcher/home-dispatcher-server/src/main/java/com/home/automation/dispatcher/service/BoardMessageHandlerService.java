@@ -5,7 +5,7 @@ import com.home.automation.dispatcher.messages.ActionMessage;
 import com.home.automation.dispatcher.messages.FeedbackMessageData;
 import com.home.automation.dispatcher.service.domain.BoardMessageService;
 import com.home.automation.dispatcher.wsclient.messages.MessageDispatcherService;
-import com.home.automation.homeboard.ws.ActionMessagePayload;
+import com.home.automation.homeboard.ws.DefaultMessagePayload;
 import com.home.automation.util.CommonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class BoardMessageHandlerService {
     public void storeAndExecuteMessage(ActionMessage message, String name) {
         final BoardMessageModel boardMessage = storeMessage(message, name);
 
-        messageDispatcherService.sendFeedbackMessageToSubscribers(createFrameFeedback(boardMessage), message.getActionId());
+        messageDispatcherService.sendFeedbackMessageToSubscribers(createFrameFeedback(boardMessage), message.getExecutorId());
         if (StringUtils.isNoneBlank(boardMessage.getExecutorId())) {
             messageDispatcherService.sendMessageToBoard(convertToBoardMessage(boardMessage), boardMessage.getMessageId());
         }
@@ -42,7 +42,7 @@ public class BoardMessageHandlerService {
     }
 
     private FeedbackMessageData createFrameFeedback(final BoardMessageModel boardMessage) {
-        FeedbackMessageData fmd = new FeedbackMessageData();
+        final FeedbackMessageData fmd = new FeedbackMessageData();
         fmd.setUserName(boardMessage.getUserName());
         fmd.setActionName(boardMessage.getActionId());
         fmd.setMessage(boardMessage.getPayload());
@@ -50,10 +50,11 @@ public class BoardMessageHandlerService {
         return fmd;
     }
 
-    private ActionMessagePayload convertToBoardMessage(final BoardMessageModel boardMessage) {
-        final ActionMessagePayload actionPayload = new ActionMessagePayload();
+    private DefaultMessagePayload convertToBoardMessage(final BoardMessageModel boardMessage) {
+        final DefaultMessagePayload actionPayload = new DefaultMessagePayload();
         actionPayload.setExecutorId(boardMessage.getExecutorId());
         actionPayload.setMessageId(boardMessage.getMessageId());
+        actionPayload.setActionId(boardMessage.getActionId());
         actionPayload.setPayload(boardMessage.getPayload());
         return actionPayload;
     }

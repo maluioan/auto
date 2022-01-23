@@ -15,7 +15,7 @@ public class CompositeBoardFrameHandler implements BoardFrameHandler {
     }
 
     @Override
-    public void handleFrame(BoardStompMessage stompMessage) {
+    public void handleFrame(final BoardStompMessage stompMessage) {
         // TODO: add functionality that cna be changed at runtime
         CollectionUtils.emptyIfNull(getBoardFrameHandlers()).stream()
                 .filter(obs -> obs.canHandleFrame(stompMessage))

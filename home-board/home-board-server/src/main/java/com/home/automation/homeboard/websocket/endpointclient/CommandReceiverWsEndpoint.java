@@ -4,12 +4,13 @@ import com.home.automation.homeboard.exception.BoardServiceException;
 import com.home.automation.homeboard.websocket.handler.WsRequestHandler;
 import com.home.automation.homeboard.websocket.message.MessageType;
 import com.home.automation.homeboard.websocket.message.request.StompRequest;
-import com.home.automation.homeboard.ws.SimpleWSMessagePayload;
+import com.home.automation.homeboard.ws.DefaultMessagePayload;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -19,7 +20,10 @@ public class CommandReceiverWsEndpoint extends AbstractWsEndpoint<StompRequest>
 
     @Override
     protected void onOpenInternal(Session session) {
-        dispatcherId = super.getHeaderValue("subscriberID");
+        final Optional<String> subscriberID = super.getHeaderValue("subscriberID");
+        subscriberID.orElseThrow(() -> new IllegalArgumentException("session should have a subscriber Id"));
+
+        dispatcherId = subscriberID.get();
         getSubscriberRegistry().registerDispatcherSubscriber(this);
         logger.info(String.format("Dispatcher with id %s, connected", dispatcherId));
     }
@@ -67,7 +71,7 @@ public class CommandReceiverWsEndpoint extends AbstractWsEndpoint<StompRequest>
 
         // TODO: maybe create a builder for stomp requests
         final StompRequest request = new StompRequest();
-        SimpleWSMessagePayload simpleWSMessagePayload = new SimpleWSMessagePayload();
+        final DefaultMessagePayload simpleWSMessagePayload = new DefaultMessagePayload();
         simpleWSMessagePayload.setPayload(errorMsg);
         request.setPayload(simpleWSMessagePayload);
         request.setContentType("application/json"); // stompRequest.getContentType()

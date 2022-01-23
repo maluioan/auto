@@ -6,8 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.home.automation.homeboard.exception.BoardServiceException;
 import com.home.automation.homeboard.websocket.message.MessageType;
 import com.home.automation.homeboard.websocket.message.request.StompRequest;
-import com.home.automation.homeboard.ws.ActionMessagePayload;
-import com.home.automation.homeboard.ws.SimpleWSMessagePayload;
+import com.home.automation.homeboard.ws.DefaultMessagePayload;
 import com.home.automation.homeboard.ws.WSMessagePayload;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -122,10 +121,10 @@ public class StompRequestConverter implements WSRequestConverter<StompRequest>
 		}
 
 		@Override
-		public ActionMessagePayload decodeMessage(String payload) {
+		public DefaultMessagePayload decodeMessage(String payload) {
 			try
 			{
-				return mapper.readValue(String.valueOf(payload), ActionMessagePayload.class);
+				return mapper.readValue(String.valueOf(payload), DefaultMessagePayload.class);
 			}
 			catch (JsonProcessingException e)
 			{
@@ -137,14 +136,14 @@ public class StompRequestConverter implements WSRequestConverter<StompRequest>
 	private class SimpleMessageConverter implements TypeConverterHelper<String, WSMessagePayload> {
 		@Override
 		public String encodeMessage(WSMessagePayload payload) {
-			return SimpleWSMessagePayload.class.equals(payload.getType())
-					? ((SimpleWSMessagePayload)payload).getPayload()
+			return DefaultMessagePayload.class.equals(payload.getType())
+					? String.valueOf(payload.getPayload())
 					: null;
 		}
 
 		@Override
 		public WSMessagePayload decodeMessage(final String payload) {
-			final SimpleWSMessagePayload simpleWSMessagePayload = new SimpleWSMessagePayload();
+			final DefaultMessagePayload simpleWSMessagePayload = new DefaultMessagePayload();
 			simpleWSMessagePayload.setPayload(payload);
 			return simpleWSMessagePayload;
 		}

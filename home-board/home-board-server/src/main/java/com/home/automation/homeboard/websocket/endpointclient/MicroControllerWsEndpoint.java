@@ -7,6 +7,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MicroControllerWsEndpoint extends AbstractWsEndpoint<PioRequest>
@@ -15,18 +16,17 @@ public class MicroControllerWsEndpoint extends AbstractWsEndpoint<PioRequest>
 
     @Override
     protected void onOpenInternal(Session session) {
-        this.boardId = super.getHeaderValue("bid");
-        if (this.boardId == null) {
-            treatNoIdBoardConnection();
-        }
+        final Optional<String> boardOpt = super.getHeaderValue("bid");
+        boardOpt.orElseThrow(() -> treatNoIdBoardConnection());
+        this.boardId = boardOpt.get();
         getSubscriberRegistry().registerMicroControllerSubscriber(this);
         logger.info(String.format("Board with id %s, connected", boardId));
     }
 
-    private void treatNoIdBoardConnection() {
+    private RuntimeException treatNoIdBoardConnection() {
         logger.error("Board didn't specified an id, please specify one!");
         super.disconnect();
-        throw new IllegalArgumentException("Board connection without an id");
+        return new IllegalArgumentException("Board connection without an id");
     }
 
     @Override

@@ -19,9 +19,7 @@
         <property name="boardFrameHandlers">
             <list>
                 <bean class="com.home.automation.dispatcher.wsclient.frame.handlers.NonSubscribedBoardBoardFrameHandler"/>
-                <bean class="com.home.automation.dispatcher.wsclient.frame.handlers.ActionSubscribersFrameBoardHandler">
-                    <constructor-arg value="/dispatcher-broker/topic/feedback/action"/>
-                </bean>
+                <bean class="com.home.automation.dispatcher.wsclient.frame.handlers.ActionSubscribersFrameBoardHandler"/>
                 <bean class="com.home.automation.dispatcher.wsclient.frame.handlers.MailPictureBoardFrameHandler"/>
             </list>
         </property>

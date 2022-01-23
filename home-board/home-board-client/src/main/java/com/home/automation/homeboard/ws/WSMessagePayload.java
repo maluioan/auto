@@ -9,4 +9,6 @@ public interface WSMessagePayload {
     default Class getType() {
         return this.getClass();
     }
+
+    Object getPayload();
 }

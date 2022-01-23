@@ -19,6 +19,7 @@ import javax.websocket.server.ServerEndpointConfig;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class AbstractWsEndpoint<REQUEST extends WSRequest> extends Endpoint implements Subscriber {
 
@@ -120,9 +121,9 @@ public abstract class AbstractWsEndpoint<REQUEST extends WSRequest> extends Endp
         sendMessage(messageObject, false);
     }
 
-    protected String getHeaderValue(final String headerName) {
+    protected Optional<String> getHeaderValue(final String headerName) {
         final List<String> bids = handshakeRequest.getHeaders().get(headerName);
-        return (CollectionUtils.isNotEmpty(bids)) ? bids.get(0) : null;
+        return CollectionUtils.isNotEmpty(bids) ? Optional.of(bids.get(0)) : Optional.empty();
     }
 
     public String getPath() {

@@ -7,7 +7,14 @@ public class ConnectPioRequestHandler extends AbstractWsRequestHandler<PioReques
 
     @Override
     protected void handleInternal(PioRequest request) {
-        System.out.println("handle internal message from board!!!");
+        final PioRequest stateRequest = new PioRequest();
+        stateRequest.setExecutorId("report");
+        stateRequest.setInitiatingSubscriber(request.getInitiatingSubscriber());
+        stateRequest.setBoardId(request.getBoardId());
+        stateRequest.setMessageId("12"); // TODO: modifica esp32 code, pune sa suporte portiuni lipsa
+        stateRequest.setPayload("oer");
+
+        getMessageMediator().handleBoardMessages(stateRequest);
     }
 
     @Override

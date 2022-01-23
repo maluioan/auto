@@ -6,7 +6,7 @@ import com.home.automation.homeboard.websocket.mediator.SubscriberRegistry;
 import com.home.automation.homeboard.websocket.message.MessageType;
 import com.home.automation.homeboard.websocket.message.request.PioRequest;
 import com.home.automation.homeboard.websocket.message.request.StompRequest;
-import com.home.automation.homeboard.ws.ActionMessagePayload;
+import com.home.automation.homeboard.ws.DefaultMessagePayload;
 import com.home.automation.homeboard.ws.NonSubscribedBoardMessagePayload;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +35,7 @@ public class ActionExecutionWsRequestHandler extends AbstractWsRequestHandler<St
 			return false;
 		}
 
-		if (!ActionMessagePayload.class.equals(wsMessage.getPayload().getType())) {
+		if (!DefaultMessagePayload.class.equals(wsMessage.getPayload().getType())) {
 			return false;
 		}
 
@@ -47,7 +47,7 @@ public class ActionExecutionWsRequestHandler extends AbstractWsRequestHandler<St
 	@Override
 	protected void handleInternal(final StompRequest request)
 	{
-		final ActionMessagePayload cmp = (ActionMessagePayload)request.getPayload();
+		final DefaultMessagePayload cmp = (DefaultMessagePayload)request.getPayload();
 		final String executorId = cmp.getExecutorId();
 
 		// TODO: add custom exceptions
@@ -62,10 +62,10 @@ public class ActionExecutionWsRequestHandler extends AbstractWsRequestHandler<St
 			throw new IllegalStateException(String.format("Action with id %s doesn't have a board attached.", executorId));
 		}
 
-		final String messageId = request.getMessageId().get();
+		final String messageId = cmp.getMessageId();
 		boolean isBoardSubscribed = subscriberRegistry.isMicroControllerBoardSubscribed(action.getBoard().getExternalBoardId());
 		if (isBoardSubscribed) {
-			getMessageMediator().handleBoardMessages(createBoardPIORequest(action, cmp, messageId));
+			getMessageMediator().handleBoardMessages(createBoardPIORequest(action.getBoard().getExternalBoardId(), cmp));
 
 		} else {
 			final StompRequest stompRequest = createBoardStompRequest(action, cmp, messageId);
@@ -74,17 +74,17 @@ public class ActionExecutionWsRequestHandler extends AbstractWsRequestHandler<St
 		}
 	}
 
-	private PioRequest createBoardPIORequest(final ActionModel action, ActionMessagePayload commandRequest, String messageId) {
+	private PioRequest createBoardPIORequest(final String externalBoardId, final DefaultMessagePayload commandRequest) {
 		final PioRequest pio = new PioRequest();
-		pio.setBoardId(action.getBoard().getExternalBoardId());
-		pio.setMessageId(messageId);
+		pio.setBoardId(externalBoardId);
+		pio.setMessageId(commandRequest.getMessageId());
 		pio.setPayload(String.valueOf(commandRequest.getPayload()));
-		pio.setExecutorId(action.getExecutorId());
+		pio.setExecutorId(commandRequest.getExecutorId());
 		pio.setMessageType(MessageType.MESSAGE);
 		return pio;
 	}
 
-	private StompRequest createBoardStompRequest(final ActionModel action, final ActionMessagePayload cmp, final String messageId) {
+	private StompRequest createBoardStompRequest(final ActionModel action, final DefaultMessagePayload cmp, final String messageId) {
 		final NonSubscribedBoardMessagePayload bmp = new NonSubscribedBoardMessagePayload();
 		bmp.setBoardName(action.getBoard().getName());
 		bmp.setActionIds(Arrays.asList(String.valueOf(action.getId())));
@@ -159,7 +159,7 @@ public class ActionExecutionWsRequestHandler extends AbstractWsRequestHandler<St
 //		return bae;
 //	}
 //
-//	private PioRequest createBoardPIORequest(BoardActionExecution bae, ActionMessagePayload commandRequest, String messageId) {
+//	private PioRequest createBoardPIORequest(BoardActionExecution bae, DefaultMessagePayload commandRequest, String messageId) {
 //		final PioRequest pio = new PioRequest();
 //		pio.setBoardId(bae.getBoardModel().getExternalBoardId());
 //		pio.setMessageId(messageId);
@@ -170,7 +170,7 @@ public class ActionExecutionWsRequestHandler extends AbstractWsRequestHandler<St
 //		return pio;
 //	}
 
-	//	private StompRequest createBoardStompRequest(BoardActionExecution bae, ActionMessagePayload commandRequest, String messageId) {
+	//	private StompRequest createBoardStompRequest(BoardActionExecution bae, DefaultMessagePayload commandRequest, String messageId) {
 //		final NonSubscribedBoardMessagePayload bmp = new NonSubscribedBoardMessagePayload();
 //		bmp.setBoardName(bae.getBoardModel().getName());
 //		bmp.setActionIds(bae.getActionIds().stream().map(ActionModel::getName).collect(Collectors.toList()));
@@ -183,7 +183,7 @@ public class ActionExecutionWsRequestHandler extends AbstractWsRequestHandler<St
 //		return stompRequest;
 //	}
 //
-//	private String convertActionToString(ActionModel actionModel, ActionMessagePayload commandRequest) {
+//	private String convertActionToString(ActionModel actionModel, DefaultMessagePayload commandRequest) {
 //		return actionModel.getCommand();
 //	}
 //	private class BoardActionExecution {

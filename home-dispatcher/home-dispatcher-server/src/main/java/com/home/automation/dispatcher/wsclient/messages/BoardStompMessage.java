@@ -3,7 +3,7 @@ package com.home.automation.dispatcher.wsclient.messages;
 import com.home.automation.homeboard.ws.WSMessagePayload;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
-public class BoardStompMessage {
+public class BoardStompMessage { // TODO: nu poate fi inlocuit cu 'GenericMessage' ?
     private final StompHeaders headers = new StompHeaders();
     private WSMessagePayload payload;
 

@@ -58,11 +58,16 @@
             <list>
                 <ref bean="connectPioRequestHandler"/>
                 <ref bean="simplePioRequestHandler"/>
+                <ref bean="boardStateRequestHandler"/>
+                <ref bean="unknownPioRequestHandler"/>
             </list>
         </property>
     </bean>
-    <bean id="simplePioRequestHandler" class="com.home.automation.homeboard.websocket.handler.SimplePioRequestHandler" parent="abstractWsRequestHandler"/>
     <bean id="connectPioRequestHandler" class="com.home.automation.homeboard.websocket.handler.ConnectPioRequestHandler" parent="abstractWsRequestHandler"/>
+    <bean id="simplePioRequestHandler" class="com.home.automation.homeboard.websocket.handler.SimplePioRequestHandler" parent="abstractWsRequestHandler"/>
+    <bean id="videoStreamRequestHandler" class="com.home.automation.homeboard.websocket.handler.VideoStreamRequestHandler" parent="abstractWsRequestHandler"/>
+    <bean id="boardStateRequestHandler" class="com.home.automation.homeboard.websocket.handler.BoardStateRequestHandler" parent="abstractWsRequestHandler"/>
+    <bean id="unknownPioRequestHandler" class="com.home.automation.homeboard.websocket.handler.UnknownPioRequestHandler" parent="abstractWsRequestHandler"/>
 
 
     <bean id="subscriberEndpoint" class="com.home.automation.homeboard.websocket.endpointclient.CommandReceiverWsEndpoint" parent="baseEndpoint">
@@ -79,7 +84,6 @@
         <property name="commandDestination" value="${command.execution.destination}"/>
         <property name="subscriberRegistry" ref="subscriberRegistry"/>
     </bean>
-
 
     <bean id="jacksonMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
 
