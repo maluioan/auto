@@ -1,0 +1,16 @@
+{
+  "userName": "cocoimarius",
+  "active": true,
+  "password": "pass",
+  "name": "Marius",
+  "surname": "Marius-Ioan",
+  "contactData": {
+    "email": "cocoimarius@gmail.com",
+    "telephone": "12312312343"
+  },
+  "roleData": [
+    {
+      "name": "admin"
+    }
+  ]
+}
